@@ -1,4 +1,4 @@
-function [node_xyz, face_node] = dbs_displayobj(objfile)
+function [node_xyz, face_node] = dbs_displayobj(input_file_name)
 
 %*****************************************************************************80
 %
@@ -35,22 +35,22 @@ if ( nargin < 1 )
     
     fprintf ( 1, '\n' );
     fprintf ( 1, 'OBJ_DISPLAY:\n' );
-    objfile = input ( 'Enter the name of the input file:' );
+    input_file_name = input ( 'Enter the name of the input file:' );
     
 end
 %
 %  Get sizes.
 %
-[ node_num, face_num, normal_num, order_max ] = obj_size(objfile);
+[ node_num, face_num, normal_num, order_max ] = obj_size(input_file_name);
 %
 %  Print the sizes.
 %
-obj_size_print ( objfile, node_num, face_num, normal_num, order_max );
+obj_size_print ( input_file_name, node_num, face_num, normal_num, order_max );
 %
 %  Get the data.
 %
 [ node_xyz, face_order, face_node ] = ...
-    obj_read ( objfile, node_num, face_num, normal_num, order_max );
+    obj_read ( input_file_name, node_num, face_num, normal_num, order_max );
 %
 %  FACE_NODE may contain polygons of different orders.
 %  To make the call to PATCH, we will assume all the polygons are the same order.
@@ -89,7 +89,7 @@ zlabel ( '--Z axis--' )
 %  The TITLE function will interpret underscores in the title.
 %  We need to unescape such escape sequences!
 %
-title_string = s_escape_tex ( objfile );
+title_string = s_escape_tex ( input_file_name );
 title ( title_string )
 %
 %  Terminate.
