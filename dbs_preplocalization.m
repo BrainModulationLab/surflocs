@@ -18,8 +18,8 @@ function dbs_preplocalization(options)
 
 cd(char(options.uifsdir))
 % Check for Electrode_Locations Folder
-if ~exist([char(options.uifsdir) '/Electrode_Locations'])
-    mkdir([options.uifsdir,'/Electrode_Locations']);
+if ~exist([char(options.uifsdir) '\Electrode_Locations'])
+    mkdir([char(options.uifsdir),'\Electrode_Locations']);
 end
 %%%%%%%%%%%% Cortex %%%%%%%%%%%%%%
 
