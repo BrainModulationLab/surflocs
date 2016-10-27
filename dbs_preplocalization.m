@@ -36,7 +36,7 @@ cortex.tri = [cortex.tri_lh; (cortex.tri_rh + length(cortex.vert_lh))]; % Combin
 cortex.tri=cortex.tri+1; % freesurfer starts at 0 for indexing
 
 % Reading in MRI parameters
-f=MRIread([directory,filesep,'mri/T1.mgz');
+f=MRIread([directory,filesep,'mri/T1.mgz']);
 
 % Translating into the appropriate space
 for k=1:size(cortex.vert,1)
