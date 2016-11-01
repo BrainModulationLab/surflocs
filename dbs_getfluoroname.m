@@ -1,4 +1,4 @@
-function [Flpath, Flname] = dbs_getfluoroname
+function [Flname, Flpath] = dbs_getfluoroname
 
 % small function determining the location and name of fluoro.tiff
 % Should be in root patient directory, only .tif in folder.

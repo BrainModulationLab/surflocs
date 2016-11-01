@@ -151,12 +151,13 @@ function mn_LoadFluoro_Callback(hObject, eventdata, handles)
 % hObject    handle to mn_LoadFluoro (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+[Fl_fname,Fl_pname] = dbs_getfluoroname;
 try
-    [Fl_pname,Fl_fname] = dbs_getfluoroname;
+    handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
 catch
     [Fl_fname,Fl_pname,~] = uigetfile({'*.tif'});
+    handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
 end
-handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
 axes(handles.ax2)
 if size(handles.Fl.I,3)>3
     handles.Fl.I=handles.Fl.I(:,:,1:3);
@@ -1421,8 +1422,13 @@ set(gca,'CameraTarget',[0,7,27],'ylim',[-115,135],'xlim',[-110,110],'zlim',[-100
 set(gca,'cameraposition',[-2500,200,0],'cameraupvector',[0,0,1])
 
 % load fluoro image
-[Fl_pname,Fl_fname] = dbs_getfluoroname;
-handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
+[Fl_fname,Fl_pname] = dbs_getfluoroname;
+try
+    handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
+catch
+    [Fl_fname,Fl_pname,~] = uigetfile({'*.tif'});
+    handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
+end
 axes(handles.ax2)
 if size(handles.Fl.I,3)>3
     handles.Fl.I=handles.Fl.I(:,:,1:3);
