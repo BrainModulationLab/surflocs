@@ -22,7 +22,7 @@ function varargout = dbslocs(varargin)
 
 % Edit the above text to modify the response to help dbsfigure
 
-% Last Modified by GUIDE v2.5 26-Oct-2016 12:57:29
+% Last Modified by GUIDE v2.5 01-Nov-2016 00:35:12
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -225,9 +225,9 @@ end
 
 cd(outfolder);
 
-% --- Executes on button press in pushbutton9.
-function pushbutton9_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton9 (see GCBO)
+% --- Executes on button press in emptypushbutton.
+function emptypushbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to emptypushbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
@@ -664,7 +664,7 @@ function patdir_choosebox_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to patdir_choosebox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-dbs_storeui(handles)
+dbs_storeptui(handles)
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over preplocal_checkbox.
@@ -681,7 +681,7 @@ function recentpts_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to recentpts (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-dbs_storeui(handles)
+dbs_storeptui(handles)
 
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
@@ -714,7 +714,7 @@ function fsdir_choosebox_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to fsdir_choosebox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-dbs_storeui(handles)
+dbs_storefsui(handles)
 
 
 % --- Executes on button press in openfsdir.
@@ -745,7 +745,7 @@ function openfsdir_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to openfsdir (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+dbs_load_fs
 
 % --- Executes on button press in checkbox12.
 function checkbox12_Callback(hObject, eventdata, handles)
@@ -897,6 +897,7 @@ function recentfs_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns recentfs contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from recentfs
+dbs_rcfscallback(handles);
 
 
 % --- Executes during object creation, after setting all properties.
@@ -982,7 +983,7 @@ function recentfs_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to recentfs (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-dbs_storeui(handles)
+dbs_storefsui(handles)
 
 
 % --- Executes on button press in checkbox45.

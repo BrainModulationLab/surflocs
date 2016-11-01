@@ -20,6 +20,6 @@ try
 dbs_switchctmr(handles);
 end
 
-dbs_getui(handles); % update ui from patient
-dbs_storeui(handles); % save in pt folder
+dbs_getptui(handles); % update ui from patient
+dbs_storeptui(handles); % save in pt folder
 dbs_addrecentpatient(handles,uipatdir,['Recent ',patsub,':'],patsub);

@@ -21,30 +21,43 @@ function [options] = dbs_coregctspm(options)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Coregister and reslice the source (moves) to reference (doesn't move)
-% clear
-% clc
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Navigate to '...PtId_FS/output' folder and select Preop NIfTI 
 % Press Open Select Postop NIfTI and Press Open again
 % cd(cellstr(uipatdirs))
 clc
-disp('Please Choose Postop MRI as Reference....')
-[referencei, path2ref] = uigetfile('*.nii','Please Choose Postop MRI as Reference....',char(options.uipatdirs));
-clc; disp('Please Choose Preop CT as Source....')
-[sourcei, path2source] = uigetfile('*.nii','Please Choose Preop CT as Source....',path2ref);
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%a
-% Check Naming Structure
-if ~strcmp(referencei,'postopmri.nii') && ~exist([char(options.uipatdirs),filesep,'postopmri.nii'])
+% Reference - try:
+path2ref = char(options.uipatdirs);
+referencei = 'postopmri.nii';
+if exist(fullfile(path2ref,referencei)) % expected file 
+    disp('loading postopmri.nii....')
+else
+    disp('Please Choose Postop MRI as Reference....')
+    [referencei, path2ref] = uigetfile('*.nii','Please Choose Postop MRI as Reference....',char(options.uipatdirs));
+    % reformat file structure
     copyfile(fullfile(path2ref,referencei),[char(options.uipatdirs),filesep,'postopmri.nii'])
+    path2ref = char(options.uipatdirs);
+    referencei = 'postopmri.nii';
 end
-if ~strcmp(sourcei,'preopct.nii') && ~exist([char(options.uipatdirs),filesep,'preopct.nii'])
+
+% Source - try:
+path2source = char(options.uipatdirs);
+sourcei = 'preopct.nii';
+if exist(fullfile(path2source,sourcei)) % expected file 
+    disp('loading preopct.nii.....')
+else
+    clc; disp('Please Choose Preop CT as Source....')
+    [sourcei, path2source] = uigetfile('*.nii','Please Choose Preop CT as Source....',path2ref);
+    % reformat file structure
     copyfile(fullfile(path2source,sourcei),[char(options.uipatdirs),filesep,'preopct.nii'])
+    path2source = char(options.uipatdirs);
+    sourcei = 'preopct.nii';
 end
-% options.postopmri.filename = 
 
 %% Coregister with SPM Commands
 % Requires SPM12 in matlabpath
 % SPM Commands
+
 matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {[fullfile(path2ref,referencei) ',1']};
 matlabbatch{1}.spm.spatial.coreg.estwrite.source = {[fullfile(path2source,sourcei) ',1']};
 matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};

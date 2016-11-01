@@ -1,16 +1,17 @@
-function dbs_storeui(handles)
+function dbs_storeptui(handles)
 
 try
-chooseboxname=get(handles.patdir_choosebox,'String');
+chooseptboxname=get(handles.patdir_choosebox,'String');
 catch
     return
 end
+
 % determine if patientfolder is set
-switch chooseboxname
+switch chooseptboxname
     case 'Choose Patient Directory'
         outdir=[dbs_getroot];
     otherwise
-        if strcmp(chooseboxname(1:8),'Multiple')
+        if strcmp(chooseptboxname(1:8),'Multiple')
                     outdir=[dbs_getroot];
 
         else
@@ -18,8 +19,8 @@ switch chooseboxname
         end
 end
 
-try % only works when calling from core lead (not lead_connectome)
-updatestatus(handles);
+try % only works when calling from core dbs
+    updatestatus(handles);
 end
 options=dbs_handles2options(handles);
 try save([outdir,'dbs_ui'],'-struct','options'); 

@@ -9,6 +9,8 @@ function dbs_preplocalization(options)
 % Michael Randazzo 06/29/2015                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% UPDATED RIGHT NOW
+
 % Subject_ID = options.patientname;
 % Subject_Path = options.uipatdirs;
 % OLD: Subject_Path = '/Users/richardsonlab/Dropbox/Electrode_Imaging/Fluoro_Imaging/Subjects/';
@@ -16,15 +18,18 @@ function dbs_preplocalization(options)
 
 % Check for fluoro converted to tiff?
 
-cd(char(options.uifsdir))
+directory = char(options.uifsdir);
+cd(directory)
 % Check for Electrode_Locations Folder
 if ~exist([char(options.uifsdir) '/Electrode_Locations'])
     mkdir([char(options.uifsdir),'/Electrode_Locations']);
+% if ~exist([directory '\Electrode_Locations']) % Windows
+%     mkdir([directory,'\Electrode_Locations']);
 end
 %%%%%%%%%%%% Cortex %%%%%%%%%%%%%%
 
-[cortex.vert_lh,cortex.tri_lh]= read_surf('./surf/lh.pial'); % Reading left side pial surface
-[cortex.vert_rh,cortex.tri_rh]= read_surf('./surf/rh.pial'); % Reading right side pial surface
+[cortex.vert_lh,cortex.tri_lh]= read_surf(fullfile(directory,'surf/lh.pial')); % Reading left side pial surface
+[cortex.vert_rh,cortex.tri_rh]= read_surf(fullfile(directory,'surf/rh.pial')); % Reading right side pial surface
 
 % Generating entire cortex
 cortex.vert = [cortex.vert_lh; cortex.vert_rh]; % Combining both hemispheres
@@ -33,7 +38,7 @@ cortex.tri = [cortex.tri_lh; (cortex.tri_rh + length(cortex.vert_lh))]; % Combin
 cortex.tri=cortex.tri+1; % freesurfer starts at 0 for indexing
 
 % Reading in MRI parameters
-f=MRIread('./mri/T1.mgz');
+f=MRIread(fullfile(directory,'mri/T1.mgz'));
 
 % Translating into the appropriate space
 for k=1:size(cortex.vert,1)
@@ -41,13 +46,23 @@ for k=1:size(cortex.vert,1)
     cortex.vert(k,:)=a(1:3)';
 end
 
-save('./cortex_indiv.mat','cortex');
+save(fullfile(directory,'cortex_indiv.mat'),'cortex');
 
 % Skull
-% files = ls;
-[skull.vert,skull.tri] = dbs_displayobj([options.patientname '_bone.obj']);
-save('skull.mat','skull')
-
+files = dir(directory);
+files = cat(2,{files(:).name});
+fname = char(files(find(~cellfun(@isempty,strfind(files,'.obj')))));
+if ~exist(fullfile(directory,fname))
+    try
+        [skull.vert,skull.tri] = dbs_displayobj(fname);
+        save(fullfile(directory,'skull.mat'),'skull')
+    catch
+        cd(directory)
+        [skull.vert,skull.tri] = dbs_displayobj(fname);
+        save(fullfile(directory,'skull.mat'),'skull')
+    end
+else
+end
 % Create cortical hull
 grayfilename = [char(options.uifsdir) '/mri/t1_class.nii'];
 outputdir='hull';

@@ -20,6 +20,6 @@ try
 dbs_switchctmr(handles);
 end
 
-dbs_getui(handles); % update ui from patient
-dbs_storeui(handles); % save in pt folder
+dbs_getfsui(handles); % update ui from fs
+dbs_storefsui(handles); % save in fs folder
 dbs_addrecentfsfolder(handles,uifsdir,['Recent ',fssub,':'],fssub);

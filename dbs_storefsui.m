@@ -7,14 +7,14 @@ catch
 end
 % determine if patientfolder is set
 switch chooseboxname
-    case 'Choose Patient Directory'
+    case 'Choose Freesurfer Directory'
         outdir=[dbs_getroot];
     otherwise
         if strcmp(chooseboxname(1:8),'Multiple')
                     outdir=[dbs_getroot];
 
         else
-        outdir=[get(handles.patdir_choosebox,'String'),filesep];
+        outdir=[get(handles.fsdir_choosebox,'String'),filesep];
         end
 end
 

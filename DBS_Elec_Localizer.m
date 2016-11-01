@@ -151,7 +151,11 @@ function mn_LoadFluoro_Callback(hObject, eventdata, handles)
 % hObject    handle to mn_LoadFluoro (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-[Fl_fname,Fl_pname,~] = uigetfile({'*.tif'});
+try
+    [Fl_pname,Fl_fname] = dbs_getfluoroname;
+catch
+    [Fl_fname,Fl_pname,~] = uigetfile({'*.tif'});
+end
 handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
 axes(handles.ax2)
 if size(handles.Fl.I,3)>3
@@ -890,6 +894,7 @@ if exist('fiducial_locations','var')
             delete(handles.FidLocalizer.SEH2)
         end
         axes(handles.ax1);
+        handles.ax1.Visible='off';
         nf = size(fiducial_locations,2);
         colormap jet
         cmap = colormap;
@@ -1345,11 +1350,21 @@ function mn_LoadAll_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 axes(handles.ax1), cla, hold on
-load cortex_indiv
-load hull
-load(fullfile('CT_reg','skull.mat'))
-load(fullfile('Electrode_locations','depthelectrodes'))
-load(fullfile('Electrode_locations','PinTips'))
+
+% load other images
+fsroot = dbs_getrecentfsfolder;
+files = dir(fsroot);
+files = cat(2,{files(:).name});
+els_dir = char(files(find(~cellfun(@isempty,strfind(files,'lectrode_')))));
+load(fullfile(fsroot,'cortex_indiv.mat'))
+load(fullfile(fsroot,'hull.mat'))
+try
+load(fullfile(fsroot,'ct_reg','skull.mat'))
+catch
+load(fullfile(fsroot,'skull.mat'))
+end
+load(fullfile(fsroot,els_dir,'depthelectrodes'))
+load(fullfile(fsroot,els_dir,'PinTips'))
 
 handles.Cortex.hull = mask_indices;
 a=[-1,0,0;0,-1,0;0,0,1];
@@ -1400,8 +1415,26 @@ set(gca,'projection','perspective')
 
 xloc = get(handles.sl_XCamLoc,'value');
 
-set(gca,'CameraTarget',[0,-50,0],'ylim',[-250,250],'xlim',[-100,100],'zlim',[-100,100])
-set(gca,'cameraposition',[-xloc,-80,-10],'cameraupvector',[0,0,1])
+% set(gca,'CameraTarget',[0,-50,0],'ylim',[-250,250],'xlim',[-100,100],'zlim',[-100,100])
+% set(gca,'cameraposition',[-xloc,-80,-10],'cameraupvector',[0,0,1])
+set(gca,'CameraTarget',[0,7,27],'ylim',[-115,135],'xlim',[-110,110],'zlim',[-100,150])
+set(gca,'cameraposition',[-2500,200,0],'cameraupvector',[0,0,1])
+
+% load fluoro image
+[Fl_pname,Fl_fname] = dbs_getfluoroname;
+handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
+axes(handles.ax2)
+if size(handles.Fl.I,3)>3
+    handles.Fl.I=handles.Fl.I(:,:,1:3);
+end
+handles.Fl.HI=imshow(handles.Fl.I);
+guidata(hObject,handles)
+%%%%%%
+
+% Set stack
+set(handles.bt_FluoroStack,'value',0)
+set(handles.bt_SkullStack,'value',0)
+axes(handles.ax1);
 
 guidata(hObject,handles)
 
