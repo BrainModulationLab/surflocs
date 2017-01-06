@@ -8,7 +8,7 @@ dbsroot=dbs_getroot;
 try
     load([dbsroot,'dbs_recentfsfolders.mat']);
 catch
-    fullrpts={['No recent ',fssub,' found']};
+    fullrfs={['No recent ',fssub,' found']};
 end
-save([dbsroot,'dbs_recentfsfolders.mat'],'fullrpts');
+save([dbsroot,'dbs_recentfsfolders.mat'],'fullrfs');
 dbs_updaterecentfsfolder(handles,fssub);

@@ -1,4 +1,4 @@
-function dbs_fidshowimage(handles,options)
+function dbs_showskull(options,varargin)
 % INPUT:
 %   filename: full filename to .nii image or name of file in current
 %   diretory
@@ -13,27 +13,17 @@ function dbs_fidshowimage(handles,options)
 % Available for Download at:
 % https://www.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image
 % -------------------------------------------------------------------------
-% Ari Kappel
-%% 
-%%%%%%%%% USER SETS PREFERENCES %%%%%%%%%%%%%
-% Set Prefs
-WLPref = 1024*32; % Default WLPref is 1024
-ZoomCoef = 5;  % Default ZoomCoef is 0.05
-toggleZoom = 'on';
-toggleAll=  'on'; % All except slider and Finetune
+if nargin<1
+    filename = '';
+else
+    filename = char(options.filename);
+end
 
-toggleSlider = 'off';
-toggleFineTune = 'off';
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-% filename = char(fullfile(options.uipatdir,options.filename));
-filename = char(options.filename);
 %
-if ~exist(filename,'file')
-    sprintf('%sr', ['File does not exist: Cannot find ' filename])
-    [filename,path,ext] = dbs_uigetfile(options.uipatdir,'Choose NifTi');
-    filename = fullfile(path,[filename,ext]);
+if ~isempty(varargin)
+    figtit=varargin{1};
+else
+    figtit = '';
 end
 
 %
@@ -43,24 +33,22 @@ catch
     nii = load_untouch_nii(filename);
 end
 
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set Prefs
+boneThresh = 1200;
+
+WLPref = 1024*32; % Default WLPref is 1024
+toggleSlider = 'off';
+toggleFineTune = 'off';
+
 if strcmp(toggleFineTune,'on')
     lengthUI = 530;
 else
     toggleFineTune = 'off';
     lengthUI = 530-80;
 end
-if strcmp(toggleAll,'off')
-    toggleSlider = 'off';
-    toggleFineTune = 'off';
-    lengthUI = 450;
-end
-
 %% Open figure;
 % isp=figure('color','k','Name',figtit,'NumberTitle','off');
-% isp=figure('color','k','Name',figtit,'NumberTitle','off','MenuBar','none','DockControls','off','ToolBar','none');
+isp=figure('color','k','Name',figtit,'NumberTitle','off','MenuBar','none','DockControls','off','ToolBar','none');
 % set(gcf,'MenuBar','figure','ToolBar','auto')
 
 sno = size(nii.img);
@@ -166,82 +154,89 @@ WVFntSz = 9;
 BtnSz = 10;
 ChBxSz = 10;
 
-% if (nargin < 2)
+if (nargin < 2)
     [Rmin Rmax] = WL2R(Win, LevV);
-% elseif numel(disprange) == 0
-%     [Rmin Rmax] = WL2R(Win, LevV);
-% else
-%     LevV = (double(disprange(2)) + double(disprange(1))) / 2;
-%     Win = double(disprange(2)) - double(disprange(1));
-%     WLAdjCoe = (Win + 1)/WLPref;
-%     [Rmin Rmax] = WL2R(Win, LevV);
-% end
+elseif numel(disprange) == 0
+    [Rmin Rmax] = WL2R(Win, LevV);
+else
+    LevV = (double(disprange(2)) + double(disprange(1))) / 2;
+    Win = double(disprange(2)) - double(disprange(1));
+    WLAdjCoe = (Win + 1)/WLPref;
+    [Rmin Rmax] = WL2R(Win, LevV);
+end
 
 
 % Get/Set Window Handles
 % set(gcf,'MenuBar','figure','ToolBar','auto')
 % [xStart yStart width height]
-% set(gcf,'Position',[125   250   868   750]) %[125   250   1038   750]
-set(0,'CurrentFigure',handles.dbsfigure);
-axes(handles.scan_axis);
+set(gcf,'Position',[125   250   868   750]) %[125   250   1038   750]
 FigPos = get(gcf,'Position');
-AxPos = [48 15 575 575];
+startUI = (FigPos(3)-lengthUI)/2;
+S_Pos = [startUI 38 lengthUI 20]; % [273 39 493 20]
+Stxt_Pos = [startUI+lengthUI-71 FigPos(4)-29 71 14]; %[711 721 55 14]
 
-startUIx = 110;
-startUIy = 18;
-S_Pos = [startUIx 38 lengthUI 20]; % [273 39 493 20]
-Stxt_Pos = [AxPos(3)-24 AxPos(4) 71 14]; %[711 721 55 14]
-
-UInow = startUIx;    Wtxt_Pos    = [UInow startUIy 60 20]; % 255
-UInow = UInow +55;  Wval_Pos    = [UInow startUIy 60 20]; % 55; 310
-UInow = UInow +65;  Ltxt_Pos    = [UInow startUIy 45 20]; % 65; 375
-UInow = UInow +40;  Lval_Pos    = [UInow startUIy 60 20]; % 40; 415
-UInow = UInow +65;  Btn_Pos     = [UInow startUIy 80 20]; %70; 485
-UInow = UInow +85; Vwtxt_Pos    = [UInow startUIy 35 20]; % 110; 595
-UInow = UInow +40;  VAxBtn_Pos  = [UInow startUIy 15 20]; % 40
-UInow = UInow +20;  VSgBtn_Pos  = [UInow startUIy 15 20]; % 20
-UInow = UInow +20;  VCrBtn_Pos  = [UInow startUIy 15 20]; % 20
-UInow = UInow +20;  VReBtn_Pos  = [UInow startUIy 35 20]; % 20
-UInow = UInow +40;  ChBx_Pos    = [UInow startUIy 80 20];   % 30
+UInow = startUI;    Wtxt_Pos    = [UInow 20 60 20]; % 255
+UInow = UInow +55;  Wval_Pos    = [UInow 20 60 20]; % 55; 310
+UInow = UInow +65;  Ltxt_Pos    = [UInow 20 45 20]; % 65; 375
+UInow = UInow +40;  Lval_Pos    = [UInow 20 60 20]; % 40; 415
+UInow = UInow +65;  Btn_Pos     = [UInow 20 80 20]; %70; 485
+UInow = UInow +85; Vwtxt_Pos    = [UInow 20 35 20]; % 110; 595
+UInow = UInow +40;  VAxBtn_Pos  = [UInow 20 15 20]; % 40
+UInow = UInow +20;  VSgBtn_Pos  = [UInow 20 15 20]; % 20
+UInow = UInow +20;  VCrBtn_Pos  = [UInow 20 15 20]; % 20
+UInow = UInow +20;  VReBtn_Pos  = [UInow 20 35 20]; % 20
+UInow = UInow +40;  ChBx_Pos    = [UInow 20 80 20];   % 30
 % Total Length: 450+80
 
 % Set UI handles
 if sno > 1
     shand = uicontrol('Visible',toggleSlider,'Style', 'slider','Min',1,'Max',sno,'Value',S,'SliderStep',[1/(sno-1) 10/(sno-1)],'Position', S_Pos,'Callback', {@SliceSlider, nii.img});
-    stxthand = uicontrol('Visible',toggleAll,'Style', 'text','Position', Stxt_Pos,'String',sprintf('Slice# %d / %d',S, sno), 'BackgroundColor', 'k', 'ForegroundColor','w','FontSize', SFntSz);
+    stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String',sprintf('Slice# %d / %d',S, sno), 'BackgroundColor', 'k', 'ForegroundColor','w','FontSize', SFntSz);
 else
-    stxthand = uicontrol('Visible',toggleAll,'Style', 'text','Position', Stxt_Pos,'String','2D image', 'BackgroundColor', 'k','ForegroundColor', 'w', 'FontSize', SFntSz);
+    stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String','2D image', 'BackgroundColor', 'k','ForegroundColor', 'w', 'FontSize', SFntSz);
 end  
-wtxthand = uicontrol('Visible',toggleAll,'Style', 'text','Position', Wtxt_Pos,'String','Window: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', WFntSz);
-wvalhand = uicontrol('Visible',toggleAll,'Style', 'edit','Position', Wval_Pos,'String',sprintf('%6.0f',Win), 'BackgroundColor', [1 1 1], 'FontSize', WVFntSz,'Callback', @WinLevChanged);
-ltxthand = uicontrol('Visible',toggleAll,'Style', 'text','Position', Ltxt_Pos,'String','Level: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
-lvalhand = uicontrol('Visible',toggleAll,'Style', 'edit','Position', Lval_Pos,'String',sprintf('%6.0f',LevV), 'BackgroundColor', [1 1 1], 'FontSize', LVFntSz,'Callback', @WinLevChanged);
-Btnhand = uicontrol('Visible',toggleAll,'Style', 'pushbutton','Position', Btn_Pos,'String','Auto W/L', 'FontSize', BtnSz, 'Callback' , @AutoAdjust);
-Vwtxthand = uicontrol('Visible',toggleAll,'Style', 'text','Position', Vwtxt_Pos,'String','View: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
-VAxBtnhand = uicontrol('Visible',toggleAll,'Style', 'pushbutton','Position', VAxBtn_Pos,'String','A', 'FontSize', BtnSz, 'Callback' , @AxialView);
-VSgBtnhand = uicontrol('Visible',toggleAll,'Style', 'pushbutton','Position', VSgBtn_Pos,'String','S', 'FontSize', BtnSz, 'Callback' , @SagittalView);
-VCrBtnhand = uicontrol('Visible',toggleAll,'Style', 'pushbutton','Position', VCrBtn_Pos,'String','C', 'FontSize', BtnSz, 'Callback' , @CoronalView);
-VReBtnhand = uicontrol('Visible',toggleAll,'Style', 'pushbutton','Position', VReBtn_Pos,'String','Reset', 'FontSize', BtnSz, 'Callback' , @ResetView);
-ChBxhand = uicontrol('Visible',toggleAll,'Visible',toggleFineTune,'Style', 'checkbox','Position', ChBx_Pos,'String','Fine Tune', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', ChBxSz);
+wtxthand = uicontrol('Style', 'text','Position', Wtxt_Pos,'String','Window: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', WFntSz);
+wvalhand = uicontrol('Style', 'edit','Position', Wval_Pos,'String',sprintf('%6.0f',Win), 'BackgroundColor', [1 1 1], 'FontSize', WVFntSz,'Callback', @WinLevChanged);
+ltxthand = uicontrol('Style', 'text','Position', Ltxt_Pos,'String','Level: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
+lvalhand = uicontrol('Style', 'edit','Position', Lval_Pos,'String',sprintf('%6.0f',LevV), 'BackgroundColor', [1 1 1], 'FontSize', LVFntSz,'Callback', @WinLevChanged);
+Btnhand = uicontrol('Style', 'pushbutton','Position', Btn_Pos,'String','Auto W/L', 'FontSize', BtnSz, 'Callback' , @AutoAdjust);
+Vwtxthand = uicontrol('Style', 'text','Position', Vwtxt_Pos,'String','View: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
+VAxBtnhand = uicontrol('Style', 'pushbutton','Position', VAxBtn_Pos,'String','A', 'FontSize', BtnSz, 'Callback' , @AxialView);
+VSgBtnhand = uicontrol('Style', 'pushbutton','Position', VSgBtn_Pos,'String','S', 'FontSize', BtnSz, 'Callback' , @SagittalView);
+VCrBtnhand = uicontrol('Style', 'pushbutton','Position', VCrBtn_Pos,'String','C', 'FontSize', BtnSz, 'Callback' , @CoronalView);
+VReBtnhand = uicontrol('Style', 'pushbutton','Position', VReBtn_Pos,'String','Reset', 'FontSize', BtnSz, 'Callback' , @ResetView);
+ChBxhand = uicontrol('Visible',toggleFineTune,'Style', 'checkbox','Position', ChBx_Pos,'String','Fine Tune', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', ChBxSz);
 
 % Set MainImage
 MainImage = 1;
 XImage=1:size(nii.img,1);
 YImage=1:size(nii.img,2);
 
+hdl_im = axes('position',[0.13,0.11,0.755,0.815]);
+% boneThresh = 1400;
+% grayImage = grayImage.img;
+binaryImage = nii.img > boneThresh;
+binaryImage = bwareaopen(binaryImage, 10);
+hdl_im = imshow(binaryImage(XImage,YImage,S), []);
 % SHOW IMAGE
 % set(gcf,'Position',[134   232   959   742])% to use medium window size; % dbs_maximize(isp); %to maximize window
-try % image toolbox
-    hdl_im=imshow(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]);
-catch
-    hdl_im=imagesc(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]);
-end;
-%
-axis image
-AutoAdjust
 
-origPos = get(gca,'Position');
-set(get(gca,'children'),'cdata',squeeze(nii.img(:,:,S,:)))
+% try % image toolbox
+%     hdl_im=imshow(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]);
+% catch
+%     hdl_im=imagesc(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]);
+% end;
+
+
+
+% AutoAdjust
+% cc = bwconncomp(nii.img(:,:,62),4);
+% grain = false(size(nii.img(:,:,62)));
+% grain(cc.PixelIdxList{1}) = true;
+% graindata = regionprops(cc,'basic')
+% imshow(grain)
+
+% set(get(gca,'children'),'cdata',squeeze(nii.img(:,:,S,:)))
 set (gcf, 'WindowScrollWheelFcn', @mouseScroll);
 set (gcf, 'ButtonDownFcn', @mouseClick);
 set(get(gca,'Children'),'ButtonDownFcn', @mouseClick);
@@ -260,30 +255,25 @@ set(gcf,'ResizeFcn', @figureResized)
 % -=< Figure resize callback function >=-
     function figureResized(object, eventdata)
         FigPos = get(gcf,'Position');
-        AxisPos = get(gca,'Position');
-        AxisPos(1) = FigPos(1)+AxisPos(1);
-        AxisPos(2) = FigPos(2)+AxisPos(2);
-        % lengthUI = 200;
-        startUIx = 120;
-        startUIy = 8;
-        S_Pos = [startUIx 38 lengthUI 20]; % [273 39 493 20]
-        Stxt_Pos = [startUIx+lengthUI-94 439.33 71 14]; %[711 721 55 14]
+        startUI = (FigPos(3)-lengthUI)/2; 
+        S_Pos = [startUI 38 lengthUI 20]; %[startUI 38 (startUI+530-startUI) 20];
+        Stxt_Pos = [startUI+lengthUI-71 FigPos(4)-29 71 14];
         if sno > 1
             set(shand,'Position', S_Pos);
         end
+        UInow = startUI;    Wtxt_Pos    = [UInow 20 60 20]; % 255
+        UInow = UInow +55;  Wval_Pos    = [UInow 20 60 20]; % 55; 310
+        UInow = UInow +65;  Ltxt_Pos    = [UInow 20 45 20]; % 65; 375
+        UInow = UInow +40;  Lval_Pos    = [UInow 20 60 20]; % 40; 415
+        UInow = UInow +65;  Btn_Pos     = [UInow 20 80 20]; %70; 485
+        UInow = UInow +85;  Vwtxt_Pos    = [UInow 20 35 20]; % 110; 595
+        UInow = UInow +40;  VAxBtn_Pos  = [UInow 20 15 20]; % 40
+        UInow = UInow +20;  VSgBtn_Pos  = [UInow 20 15 20]; % 20
+        UInow = UInow +20;  VCrBtn_Pos  = [UInow 20 15 20]; % 20
+        UInow = UInow +20;  VReBtn_Pos  = [UInow 20 35 20]; % 20
+        UInow = UInow +40;  ChBx_Pos    = [UInow 20 80 20];   % 30
+        % Total Length: 450
         
-        UInow = startUIx;    Wtxt_Pos    = [UInow startUIy 60 20]; % 255
-        UInow = UInow +55;  Wval_Pos    = [UInow startUIy 60 20]; % 55; 310
-        UInow = UInow +65;  Ltxt_Pos    = [UInow startUIy 45 20]; % 65; 375
-        UInow = UInow +40;  Lval_Pos    = [UInow startUIy 60 20]; % 40; 415
-        UInow = UInow +65;  Btn_Pos     = [UInow startUIy 80 20]; %70; 485
-        UInow = UInow +85; Vwtxt_Pos    = [UInow startUIy 35 20]; % 110; 595
-        UInow = UInow +40;  VAxBtn_Pos  = [UInow startUIy 15 20]; % 40
-        UInow = UInow +20;  VSgBtn_Pos  = [UInow startUIy 15 20]; % 20
-        UInow = UInow +20;  VCrBtn_Pos  = [UInow startUIy 15 20]; % 20
-        UInow = UInow +20;  VReBtn_Pos  = [UInow startUIy 35 20]; % 20
-        UInow = UInow +40;  ChBx_Pos    = [UInow startUIy 80 20];   % 30
-        % Total Length: 450+80
         
         set(wtxthand,'Position', Wtxt_Pos);
         set(wvalhand,'Position', Wval_Pos);
@@ -327,7 +317,7 @@ set(gcf,'ResizeFcn', @figureResized)
         else
             set(stxthand, 'String', '2D image');
         end
-        set(get(gca,'children'),'cdata',squeeze(nii.img(:,:,S,:)))
+        set(get(gca,'children'),'cdata',squeeze(binaryImage(:,:,S,:)))
     end
 
 % -=< Mouse button released callback function >=-
@@ -341,7 +331,7 @@ set(gcf,'ResizeFcn', @figureResized)
         if strcmp(MouseStat,'normal')        %   Left CLICK
             InitialCoord = get(0,'PointerLocation');
             set(gcf, 'WindowButtonMotionFcn', @WinLevAdj);
-        elseif (MouseStat(1) == 'a')   && strcmp(toggleZoom,'on')     %   RIGHT CLICK OPTION TO ZOOM
+        elseif (MouseStat(1) == 'a')        %   RIGHT CLICK OPTION TO ZOOM
             InitialCoord = get(0,'PointerLocation');
             set(gcf, 'WindowButtonMotionFcn', @ZoomAdj);
         end
@@ -371,10 +361,10 @@ set(gcf,'ResizeFcn', @figureResized)
         PosDiff = get(0,'PointerLocation') - InitialCoord;
         ImgPos = get(hdl_im.Parent,'Position');
         if ~isequal(PosDiff(2),0)
-            ImgPos(1) = ImgPos(1) - ZoomCoef/PosDiff(2)*0.5;
-            ImgPos(2) = ImgPos(2) - ZoomCoef/PosDiff(2)*0.5;
-            ImgPos(3) = ImgPos(3) + ZoomCoef/PosDiff(2)*1;
-            ImgPos(4) = ImgPos(4) + ZoomCoef/PosDiff(2)*1;
+        ImgPos(1) = ImgPos(1) - 0.05/PosDiff(2)*0.5;
+        ImgPos(2) = ImgPos(2) - 0.05/PosDiff(2)*0.5;
+        ImgPos(3) = ImgPos(3) + 0.05/PosDiff(2)*1;
+        ImgPos(4) = ImgPos(4) + 0.05/PosDiff(2)*1;
         else
             return
         end
@@ -407,14 +397,28 @@ set(gcf,'ResizeFcn', @figureResized)
 
 % -=< Window and level auto adjustment callback function >=-
     function AutoAdjust(object,eventdata)
-        Win = double(max(nii.img(:))-min(nii.img(:)));
-        Win (Win < 1) = 1;
-        LevV = double(min(nii.img(:)) + (Win/2));
+
+        level = zeros(size(nii.img,3));
+        BW = zeros(size(nii.img));
+        for i = 1:size(nii.img,3)
+            level(i) = graythresh(nii.img(:,:,S));
+            BW(:,:,i) = imbinarize(nii.img(:,:,i),level(i));
+        end
+%         nii.img = BW;
+%         Win = double(max(nii.img(:))-min(nii.img(:)));
+%         Win (Win < 1) = 1;
+%         LevV = double(min(nii.img(:)) + (Win/2));
+        LevV = 600;
+        Win = 100;
         [Rmin, Rmax] = WL2R(Win,LevV);
         caxis([Rmin, Rmax])
         set(lvalhand, 'String', sprintf('%6.0f',LevV));
         set(wvalhand, 'String', sprintf('%6.0f',Win));
+%         hdl_im = imshow(nii.img(:,:,S), [0 1]);
     end
+
+
+
 
 % -=< Axial view callback function >=-
     function AxialView(object,eventdata)
@@ -470,7 +474,6 @@ set(gcf,'ResizeFcn', @figureResized)
         %         cla(hdl_im);
         %         hdl_im = axes('position',[0.13,0.11,0.755,0.815]);
         hdl_im = imshow(squeeze(nii.img(:,:,S,:)), [Rmin Rmax]);
-        axis normal
 
         if sno > 1
             shand = uicontrol('Visible',toggleSlider,'Style', 'slider','Min',1,'Max',sno,'Value',S,'SliderStep',[1/(sno-1) 10/(sno-1)],'Position', S_Pos,'Callback', {@SliceSlider, nii.img});
@@ -507,8 +510,7 @@ set(gcf,'ResizeFcn', @figureResized)
         %         cla(hdl_im);
         %         hdl_im = axes('position',[0.13,0.11,0.755,0.815]);
         hdl_im = imshow(squeeze(nii.img(:,:,S,:)), [Rmin Rmax]);
-        axis normal
-        
+
         if sno > 1
             shand = uicontrol('Visible',toggleSlider,'Style', 'slider','Min',1,'Max',sno,'Value',S,'SliderStep',[1/(sno-1) 10/(sno-1)],'Position', S_Pos,'Callback', {@SliceSlider, nii.img});
             stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String',sprintf('Slice# %d / %d',S, sno), 'BackgroundColor', 'k','ForegroundColor', 'w', 'FontSize', SFntSz);
@@ -527,16 +529,12 @@ set(gcf,'ResizeFcn', @figureResized)
         set (gcf, 'ButtonDownFcn', @mouseClick);
         set(get(gca,'Children'),'ButtonDownFcn', @mouseClick);
     end
+
 % -=< Reset view callback function >=-
     function ResetView(object,eventdata)
-              
-        nii.img = ImgAx;
-        S = S_a;
-        sno = sno_a;
-%         cla(gcf);
-        set(gca,'Position',origPos)
-        hdl_im=imshow(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]);
         
+        set(hdl_im.Parent,'Position',[0.13,0.11,0.755,0.815])
+
         if sno > 1
             shand = uicontrol('Visible',toggleSlider,'Style', 'slider','Min',1,'Max',sno,'Value',S,'SliderStep',[1/(sno-1) 10/(sno-1)],'Position', S_Pos,'Callback', {@SliceSlider, nii.img});
             stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String',sprintf('Slice# %d / %d',S, sno), 'BackgroundColor', 'k','ForegroundColor', 'w', 'FontSize', SFntSz);

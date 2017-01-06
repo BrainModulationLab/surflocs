@@ -8,7 +8,11 @@ for i=1:length(fullrpts)
     [~,fullrpts{i}]=fileparts(fullrpts{i});
 end
 fullrpts=[{['Recent ',patsub,':']};fullrpts];
+try
 set(handles.recentpts,'String',fullrpts);
+catch
+    return
+end
 if exist('nuchosenix','var')
    set(handles.recentpts,'Value',nuchosenix+1); 
 end

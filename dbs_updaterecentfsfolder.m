@@ -4,11 +4,15 @@ if ~exist('fssub','var')
 end
 dbsroot=dbs_getroot;
 load([dbsroot,'dbs_recentfsfolders.mat']);
-for i=1:length(fullrpts)
-    [~,fullrpts{i}]=fileparts(fullrpts{i});
+for i=1:length(fullrfs)
+    [~,fullrfs{i}]=fileparts(fullrfs{i});
 end
-fullrpts=[{['Recent ',fssub,':']};fullrpts];
-set(handles.recentfs,'String',fullrpts);
+fullrfs=[{['Recent ',fssub,':']};fullrfs];
+try
+    set(handles.recentfs,'String',fullrfs);
+catch
+    return
+end
 if exist('nuchosenix','var')
    set(handles.recentfs,'Value',nuchosenix+1); 
 end

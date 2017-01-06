@@ -22,7 +22,7 @@ function varargout = dbslocs(varargin)
 
 % Edit the above text to modify the response to help dbsfigure
 
-% Last Modified by GUIDE v2.5 01-Nov-2016 00:35:12
+% Last Modified by GUIDE v2.5 15-Nov-2016 01:52:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -183,7 +183,9 @@ options=dbs_handles2options(handles);
 
 options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
 options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
-
+try
+save(fullfile(char(options.uipatdirs,'options.mat')),'options')
+end
 dbs_run('run',options);
 
 % dbs_busyaction('off',dbsfig,'lead');
@@ -208,6 +210,7 @@ function openpatientdir_Callback(hObject, eventdata, handles)
 % hObject    handle to openpatientdir (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+prefs = dbs_prefs('');
 outfolder=get(handles.patdir_choosebox,'String');
 
 if strcmp(outfolder,'No Patient Selected')
@@ -223,8 +226,12 @@ elseif ispc
     system(['explorer ', outfolder]);
 end
 
-cd(outfolder);
-
+if strcmp(prefs.patdir.showpath,'on')
+    disp(outfolder)
+end
+if strcmp(prefs.patdir.cd,'on')
+    cd(outfolder);
+end
 % --- Executes on button press in emptypushbutton.
 function emptypushbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to emptypushbutton (see GCBO)
@@ -506,7 +513,6 @@ function fidlocalizer_checkbox_Callback(hObject, eventdata, handles)
 
 % Hint: get(hObject,'Value') returns toggle state of fidlocalizer_checkbox
 
-
 % --- Executes on selection change in runlocmenu2.
 function runlocmenu2_Callback(hObject, eventdata, handles)
 % hObject    handle to runlocmenu2 (see GCBO)
@@ -722,6 +728,7 @@ function openfsdir_Callback(hObject, eventdata, handles)
 % hObject    handle to openfsdir (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+prefs = dbs_prefs('');
 outfolder=get(handles.fsdir_choosebox,'String');
 
 if strcmp(outfolder,'No Patient Selected')
@@ -732,12 +739,19 @@ end
 if ismac
     system(['open ', outfolder]);
 elseif isunix
+    disp(outfolder)
     system(['xdg-open ', outfolder]);
 elseif ispc
+    disp(outfolder)
     system(['explorer ', outfolder]);
 end
 
-cd(outfolder);
+if strcmp(prefs.fsdir.showpath,'on')
+    disp(outfolder)
+end
+if strcmp(prefs.fsdir.cd,'on')
+    cd(outfolder);
+end
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over openfsdir.
@@ -754,7 +768,6 @@ function checkbox12_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of checkbox12
-
 
 
 function edit4_Callback(hObject, eventdata, handles)
@@ -1464,3 +1477,53 @@ function popupmenu38_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in dicm2tiff.
+function dicm2tiff_Callback(hObject, eventdata, handles, options)
+% hObject    handle to dicm2tiff (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% [options.fluoro] = dbs_dicm2tiff(options);
+options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
+options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+if isempty(options.uipatdirs)
+    error('Please Choose Patient Directory')
+end
+dbs_dicm2tiff(options)
+
+
+% --- Executes on button press in dicm2nifti.
+function dicm2nifti_Callback(hObject, eventdata, handles)
+% hObject    handle to dicm2nifti (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
+options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+if isempty(options.uipatdirs)
+    error('Please Choose Patient Directory')
+end
+disp('Choose Input Directory')
+options.input_pathname = uigetdir(char(options.uipatdirs));
+x = strfind(options.input_pathname,'/');
+options.output_pathname = fullfile(options.input_pathname(1:x(end)),'NifTi');
+if ~exist(options.output_pathname,'dir')
+    mkdir(options.output_pathname)
+end
+dbs_dicm2nifti(options)
+
+
+% --- Executes on button press in skull2Obj.
+function skull2Obj_Callback(hObject, eventdata, handles)
+% hObject    handle to skull2Obj (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+prefs = dbs_prefs('');
+if isempty(getappdata(handles.dbsfigure,'uipatdir'))
+    error('Please Choose Patient Directory')
+end
+options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
+options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+options.filename=fullfile(options.uipatdirs,prefs.skull2obj);
+dbs_showskull(options)
+

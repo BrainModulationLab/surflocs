@@ -4,35 +4,35 @@ if ~exist('fssub','var')
     fssub='freesurfer';
 end
 if ~exist([dbsroot,'dbs_recentfsfolders.mat']);
-    fullrpts = dbsroot;
+    fullrfs = dbsroot;
 else
     load([dbsroot,'dbs_recentfsfolders.mat']);
 end
 
-if strcmp(fullrpts,['No recent ',fssub,' found'])
-    fullrpts={};
+if strcmp(fullrfs,['No recent ',fssub,' found'])
+    fullrfs={};
 end
 
 if ~exist('chosenix','var')
     try
-        chosenix=fullrpts{get(handles.recentpts,'Value')};
+        chosenix=fullrfs{get(handles.recentpts,'Value')};
     catch
         chosenix=['Recent ',fssub,':'];
     end
 end
 
 try
-fullrpts=[uifsdir';fullrpts];
+fullrfs=[uifsdir';fullrfs];
 catch % calls from lead_group could end up transposed
-fullrpts=[uifsdir;fullrpts];    
+fullrfs=[uifsdir;fullrfs];    
 end
 
-[fullrpts]=unique(fullrpts,'stable');
-if length(fullrpts)>10
+[fullrfs]=unique(fullrfs,'stable');
+if length(fullrfs)>10
     
-   fullrpts=fullrpts(1:10);
+   fullrfs=fullrfs(1:10);
 end
-[~,nuchosenix]=ismember(chosenix,fullrpts);
-save([dbsroot,'dbs_recentfsfolders.mat'],'fullrpts');
+[~,nuchosenix]=ismember(chosenix,fullrfs);
+save([dbsroot,'dbs_recentfsfolders.mat'],'fullrfs');
 
 dbs_updaterecentfsfolder(handles,fssub,nuchosenix);

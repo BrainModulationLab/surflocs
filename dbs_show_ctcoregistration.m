@@ -29,7 +29,7 @@ if ~legacy % use new imshowpair tool
         ct=dbs_load_nii([options.root,options.patientname,filesep,options.prefs.ctnii_coregistered]);
     end
 
-    ct.img=ea_tonemap_ct(ct.img);
+    %     ct.img=ea_tonemap_ct(ct.img);
 
     ct.img(:)=dbs_nanzscore(ct.img(:)); %     ct.img(:)=ea_nanzscore(ct.img(:),'robust');
     ct.img=(ct.img+2.5)/5; % set max/min to -/+ 2.5 standard deviations
@@ -40,14 +40,22 @@ if ~legacy % use new imshowpair tool
 
     %jim=cat(4,mr.img,mean(cat(4,mr.img,ct.img),4),ct.img);
     %jim=cat(4,mr.img,(mr.img-ct.img)/2,ct.img);
-
+    
+    %     for i = 1:size(mr.img,3) % size is equal
+    %         %         level_mr{i} = graythresh(mr.img(:,:,i));
+    %         %         BW_mr{i} = imbinarize(mr.img(:,:,i),level{i});
+    %         level_ct{i} = graythresh(ct.img(:,:,i));
+    %         BW_ct{i} = imbinarize(ct.img(:,:,i),level_ct{i});
+    %     end
+    
     %%%% Debug CT contrast issue
-    for i = 1:size(mr.img,3);
-        mr.img(:,:,i) = imadjust(mr.img(:,:,i),[0.325; 1], []);
-        ct.img(:,:,i) = imadjust(ct.img(:,:,i),[0.48; 0.52], []);
-    end
-%     ct.img = imhistmatch(ct.img,mr.img);
-%     figure; imshow(ct2.img(:,:,53))
+    %     for i = 1:size(mr.img,3);
+    %         mr.img(:,:,i) = imadjust(mr.img(:,:,i),[0.325; 1], []);
+    %         ct.img(:,:,i) = imadjust(ct.img(:,:,i),[0.48; 0.52], []);
+    %     end
+    %     ct.img = imhistmatch(ct.img,mr.img);
+    %     figure; imshow(ct2.img(:,:,53))
+    %     AutoAdjust
 
     jim=cat(4,0.1*mr.img+0.9*ct.img,0.4*mr.img+0.6*ct.img,0.9*mr.img+0.1*ct.img);
 
@@ -325,4 +333,3 @@ tmct(ct>80 & ct<1300)=(tmct(ct>80 & ct<1300)-80)/1220;
 % saturate above and below levels:
 tmct(ct>1300)=1;
 tmct(ct<0)=0;
-

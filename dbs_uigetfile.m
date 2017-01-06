@@ -1,5 +1,8 @@
-function [filename, pathname] = dbs_uigetfile(start_path, dialog_title)
-
+function [filename, pathname, extension] = dbs_uigetfile(start_path, dialog_title)
+%
+% Syntax: 
+%       [filename, pathname, extension] = dbs_uigetfile(start_path, dialog_title)
+%
 import javax.swing.JFileChooser;
 
 if nargin == 0 || strcmp(start_path,'') % Allow a null argument.
@@ -21,8 +24,7 @@ if status == JFileChooser.APPROVE_OPTION
     jFile = jchooser.getSelectedFiles();
     pathname{size(jFile, 1)}=[];
     for i=1:size(jFile, 1)
-        pathname{i} = char(jFile(i).getAbsolutePath);
-        filename{i}
+        [pathname, filename, extension] = fileparts(char(jFile(i).getAbsolutePath));
     end
 
 elseif status == JFileChooser.CANCEL_OPTION

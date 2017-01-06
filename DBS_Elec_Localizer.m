@@ -722,12 +722,18 @@ load(fullfile(CR_pname,CR_fname))
 %FOR NOW
 axes(handles.ax1)
 delete(handles.Cortex.Hp)
-handles.Cortex.Hp = patch('vertices',cortex.vert,'faces',cortex.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none');
+handles.Cortex.Hp = patch('vertices',cortex.vert,'faces',cortex.tri(:,[1 3 2]),...
+    'facecolor',[.65 .65 .65],'edgecolor','none',...
+    'facelighting', 'gouraud', 'specularstrength', .25);
 camlight('headlight','infinite');
 axis equal
 set(gca,'DataAspectRatioMode','manual','PlotBoxAspectRatioMode','manual');
 set(gca,'camerapositionmode','manual','cameratargetmode','manual','cameraupvectormode','manual','cameraviewanglemode','manual')
 set(gca,'projection','perspective')
+
+% els = cell2mat(CortElecLoc');
+% hold on; plot3(els(:,1),els(:,2),els(:,3),'.','color','r','markersize',10)
+% handles.Cortex.Hp.Facealpha = 1;
 
 %handles.Cortex.OSkull=patch('vertices',skull.vert,'faces',skull.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none','FaceAlpha',0.2);
 %handles.Cortex.ISkull=patch('vertices',skull_inner.vert,'faces',skull_inner.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none','FaceAlpha',0.2);
@@ -1354,19 +1360,31 @@ axes(handles.ax1), cla, hold on
 
 % load other images
 fsroot = dbs_getrecentfsfolder;
-files = dir(fsroot);
-files = cat(2,{files(:).name});
-els_dir = char(files(find(~cellfun(@isempty,strfind(files,'lectrode_')))));
-load(fullfile(fsroot,'cortex_indiv.mat'))
-load(fullfile(fsroot,'hull.mat'))
+ptroot = dbs_getrecentptfolder;
+[folders, files] = dbs_subdir(fsroot);
+els_dir = folders(~cellfun(@isempty,strfind(folders,'lectrode')));
+[~,els_files] = dbs_subdir(char(els_dir));
+load(cell2mat(files(~cellfun(@isempty,strfind(files,'cortex'))))) % cortex_indiv.mat
+load(cell2mat(files(~cellfun(@isempty,strfind(files,'hull')))))
 try
-load(fullfile(fsroot,'ct_reg','skull.mat'))
+load(fullfile(fsroot,'CT_reg','skull.mat'))
 catch
 load(fullfile(fsroot,'skull.mat'))
 end
-load(fullfile(fsroot,els_dir,'depthelectrodes'))
-load(fullfile(fsroot,els_dir,'PinTips'))
-
+try
+load(char(fullfile(els_dir,els_files(~cellfun(@isempty,strfind(els_files,'electrodes'))))))
+catch
+disp('Choose Depth Electrodes')
+[depth_electrodes,elsPath,ext] = dbs_uigetfile(fsroot,'Choose Depth Electrodes');
+load(fullfile(elsPath,[depth_electrodes,ext]))
+end
+try
+load(char(fullfile(els_dir,els_files(~cellfun(@isempty,strfind(els_files,'Pin'))))))
+catch
+disp('Choose PinTips');
+[PinTips,pinPath,ext] = dbs_uigetfile(fsroot,'Choose PinTips');
+load(fullfile(pinPath,[PinTips,ext]))
+end
 handles.Cortex.hull = mask_indices;
 a=[-1,0,0;0,-1,0;0,0,1];
 skull.vert=skull.vert'; skull.tri=skull.tri';
@@ -1426,8 +1444,8 @@ set(gca,'cameraposition',[-2500,200,0],'cameraupvector',[0,0,1])
 try
     handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
 catch
-    [Fl_fname,Fl_pname,~] = uigetfile({'*.tif'});
-    handles.Fl.I=imread(fullfile(Fl_pname,Fl_fname));
+    [Fl_fname,Fl_pname,ext] = dbs_uigetfile(ptroot,'Choose Fluoro');%{'*.tif'});
+    handles.Fl.I=imread(fullfile(Fl_pname,[Fl_fname,ext]));
 end
 axes(handles.ax2)
 if size(handles.Fl.I,3)>3

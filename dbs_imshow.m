@@ -1,36 +1,36 @@
-function  [nii] = dbs_imshow(nii, options ,addstring)
+function  [nifti] = dbs_imshow(nifti, options)
 % this function is based on IMSHOW3DFULL by Maysam Shahedi and supports
 % truecolor images. Windowed view is adapted from MAGNIFY by Rick Hindman.
 % 
 % Todd Herrington, 2016-03-16
 
-if nargin==2
-    figtit=[options.patientname];
-    isp = axes(options.axes2);
-elseif nargin==3
-    figtit=[options.patientname,', ',addstring];
-    isp = axes(options.axes2);
-else
-    figtit='';
-    isp = axes(options.axes2);
-end
-
-nii.img(:)=dbs_nanzscore(nii.img(:)); %     ct.img(:)=ea_nanzscore(ct.img(:),'robust');
-nii.img=(nii.img+2.5)/5; % set max/min to -/+ 2.5 standard deviations
-nii.img(nii.img<0)=0; nii.img(nii.img>1)=1;
+% if nargin==2
+%     figtit=[options.patientname];
+%     axes(options.scan_axis);
+% elseif nargin==3
+%     figtit=[options.patientname,', ',addstring];
+%     axes(options.scan_axis);
+% else
+%     figtit='';
+%     axes(options.scan_axis);
+% end
+% isp = axes(handles.scan_axis);
+nifti.img(:)=dbs_nanzscore(nifti.img(:)); %     ct.img(:)=ea_nanzscore(ct.img(:),'robust');
+nifti.img=(nifti.img+2.5)/5; % set max/min to -/+ 2.5 standard deviations
+nifti.img(nifti.img<0)=0; nifti.img(nifti.img>1)=1;
 
 % Check histogram
 % figure;
 % imhist(nii.img(:,:,round(rand(1)*size(nii.img,3))));
-for i = 1:size(nii.img,3);
-    nii.img(:,:,i) = imadjust(nii.img(:,:,53),[0.325; 1], []);
+for i = 1:size(nifti.img,3);
+    nifti.img(:,:,i) = imadjust(nifti.img(:,:,53),[0.325; 1], []);
 end
 
 
 % isp=figure('color','k','Name',figtit,'NumberTitle','off','MenuBar','none','DockControls','off','ToolBar','none');
 % dbs_maximize(isp);
-nii.img = single(nii.img);
-sno = size(nii.img);  % image size
+nifti.img = single(nifti.img);
+sno = size(nifti.img);  % image size
 sno_a = sno(3);  % number of axial slices
 S_a = round(sno_a/2);
 sno_s = sno(2);  % number of sagittal slices
@@ -42,70 +42,70 @@ sno = sno_a;
 
 % global InitialCoord;
 
-% MinV = 0;
-% MaxV = dbs_nanmax(nii(:));
-% LevV = (double( MaxV) + double(MinV)) / 2;
-% Win = double(MaxV) - double(MinV);
-% WLAdjCoe = (Win + 1)/1024;
-% FineTuneC = [1 1/16];    % Regular/Fine-tune mode coefficients
-% 
-% if isa(nii.img,'uint8')
-%     MaxV = uint8(Inf);
-%     MinV = uint8(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'uint16')
-%     MaxV = uint16(Inf);
-%     MinV = uint16(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'uint32')
-%     MaxV = uint32(Inf);
-%     MinV = uint32(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'uint64')
-%     MaxV = uint64(Inf);
-%     MinV = uint64(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'int8')
-%     MaxV = int8(Inf);
-%     MinV = int8(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'int16')
-%     MaxV = int16(Inf);
-%     MinV = int16(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'int32')
-%     MaxV = int32(Inf);
-%     MinV = int32(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'int64')
-%     MaxV = int64(Inf);
-%     MinV = int64(-Inf);
-%     LevV = (double( MaxV) + double(MinV)) / 2;
-%     Win = double(MaxV) - double(MinV);
-%     WLAdjCoe = (Win + 1)/1024;
-% elseif isa(nii,'logical')
-%     MaxV = 0;
-%     MinV = 1;
-%     LevV =0.5;
-%     Win = 1;
-%     WLAdjCoe = 0.1;
-% end 
+MinV = 0;
+MaxV = dbs_nanmax(nii.img(:));
+LevV = (double( MaxV) + double(MinV)) / 2;
+Win = double(MaxV) - double(MinV);
+WLAdjCoe = (Win + 1)/1024;
+FineTuneC = [1 1/16];    % Regular/Fine-tune mode coefficients
 
-% catch
+if isa(nii.img,'uint8')
+    MaxV = uint8(Inf);
+    MinV = uint8(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'uint16')
+    MaxV = uint16(Inf);
+    MinV = uint16(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'uint32')
+    MaxV = uint32(Inf);
+    MinV = uint32(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'uint64')
+    MaxV = uint64(Inf);
+    MinV = uint64(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'int8')
+    MaxV = int8(Inf);
+    MinV = int8(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'int16')
+    MaxV = int16(Inf);
+    MinV = int16(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'int32')
+    MaxV = int32(Inf);
+    MinV = int32(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'int64')
+    MaxV = int64(Inf);
+    MinV = int64(-Inf);
+    LevV = (double( MaxV) + double(MinV)) / 2;
+    Win = double(MaxV) - double(MinV);
+    WLAdjCoe = (Win + 1)/1024;
+elseif isa(nii,'logical')
+    MaxV = 0;
+    MinV = 1;
+    LevV =0.5;
+    Win = 1;
+    WLAdjCoe = 0.1;
+end 
+
+catch
 MaxV = 0;
 MinV = 1;
 LevV =0.5;
@@ -113,9 +113,9 @@ Win = 1;
 WLAdjCoe = 0.1;
 
 
-ImgO = nii.img; % ImgO will never be permuted. ImgCr and ImgSg won't be used anymore but generated on the fly via ImgO.
-ImgCr = flip(permute(nii.img, [3 1 2 4]),1);   % Coronal view image
-ImgSg = flip(permute(nii.img, [3 2 1 4]),1);   % Sagittal view image
+ImgO = nifti.img; % ImgO will never be permuted. ImgCr and ImgSg won't be used anymore but generated on the fly via ImgO.
+ImgCr = flip(permute(nifti.img, [3 1 2 4]),1);   % Coronal view image
+ImgSg = flip(permute(nifti.img, [3 2 1 4]),1);   % Sagittal view image
 
 % ImgZ=0; % zoomed or unzoomed state
 % ImgZax{1}=1:size(ImgO,1); % axial zoomed out boundingboxes
@@ -134,64 +134,64 @@ ImgSg = flip(permute(nii.img, [3 2 1 4]),1);   % Sagittal view image
 
 View = 'A';
 
-% SFntSz = 9;
-% LFntSz = 10;
-% WFntSz = 10;
-% VwFntSz = 10;
-% LVFntSz = 9;
-% WVFntSz = 9;
-% BtnSz = 10;
-% ChBxSz = 10;
+SFntSz = 9;
+LFntSz = 10;
+WFntSz = 10;
+VwFntSz = 10;
+LVFntSz = 9;
+WVFntSz = 9;
+BtnSz = 10;
+ChBxSz = 10;
 
 [Rmin Rmax] = WL2R(Win, LevV);
 
 hdl_im = axes('position',[0,0,1,1]);
 set(0,'CurrentFigure',isp);
 MainImage = 1;
-XImage=1:size(nii.img,1);
-YImage=1:size(nii.img,2);
+XImage=1:size(nifti.img,1);
+YImage=1:size(nifti.img,2);
 
         try % image toolbox     
-            ImHndl=imshow(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imshow(squeeze(nifti.img(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         catch
-            ImHndl=imagesc(squeeze(nii.img(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imagesc(squeeze(nifti.img(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         end;
         showhelptext;
 
-% FigPos = get(gcf,'Position');
-% S_Pos = [50 20 uint16(FigPos(3)-150)+1 20];
-% Stxt_Pos = [50 90 uint16(FigPos(3)-100)+1 15];
-% Wtxt_Pos = [20 20 60 20];
-% Wval_Pos = [75 20 60 20];
-% Ltxt_Pos = [140 20 45 20];
-% Lval_Pos = [180 20 60 20];
-% BtnStPnt = uint16(FigPos(3)-210)+1;
-% if BtnStPnt < 360
-%     BtnStPnt = 360;
-% end
-% Btn_Pos = [BtnStPnt 20 80 20];
-% ChBx_Pos = [BtnStPnt+90 20 100 20];
-% Vwtxt_Pos = [255 20 35 20];
-% VAxBtn_Pos = [490 20 15 20];
-% VSgBtn_Pos = [510 20 15 20];
-% VCrBtn_Pos = [530 20 15 20];
-% 
-% if sno > 1
-% %    shand = uicontrol('Style', 'slider','Min',1,'Max',sno,'Value',S,'SliderStep',[1/(sno-1) 10/(sno-1)],'Position', S_Pos,'Callback', {@SliceSlider, Img});
-% %    stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String',sprintf('Slice# %d / %d',S, sno), 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', SFntSz);
-% else
-% %    stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String','2D image', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', SFntSz);
-% end    
-% %ltxthand = uicontrol('Style', 'text','Position', Ltxt_Pos,'String','Level: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
-% %wtxthand = uicontrol('Style', 'text','Position', Wtxt_Pos,'String','Window: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', WFntSz);
-% %lvalhand = uicontrol('Style', 'edit','Position', Lval_Pos,'String',sprintf('%6.0f',LevV), 'BackgroundColor', [1 1 1], 'FontSize', LVFntSz,'Callback', @WinLevChanged);
-% %wvalhand = uicontrol('Style', 'edit','Position', Wval_Pos,'String',sprintf('%6.0f',Win), 'BackgroundColor', [1 1 1], 'FontSize', WVFntSz,'Callback', @WinLevChanged);
-% %Btnhand = uicontrol('Style', 'pushbutton','Position', Btn_Pos,'String','Auto W/L', 'FontSize', BtnSz, 'Callback' , @AutoAdjust);
-% %ChBxhand = uicontrol('Style', 'checkbox','Position', ChBx_Pos,'String','Fine Tune', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', ChBxSz);
-% %Vwtxthand = uicontrol('Style', 'text','Position', Vwtxt_Pos,'String','View: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
-% VAxBtnhand = uicontrol('Style', 'pushbutton','Position', VAxBtn_Pos,'String','A', 'FontSize', BtnSz, 'Callback' , @AxialView);
-% VSgBtnhand = uicontrol('Style', 'pushbutton','Position', VSgBtn_Pos,'String','S', 'FontSize', BtnSz, 'Callback' , @SagittalView);
-% VCrBtnhand = uicontrol('Style', 'pushbutton','Position', VCrBtn_Pos,'String','C', 'FontSize', BtnSz, 'Callback' , @CoronalView);
+FigPos = get(gcf,'Position');
+S_Pos = [50 20 uint16(FigPos(3)-150)+1 20];
+Stxt_Pos = [50 90 uint16(FigPos(3)-100)+1 15];
+Wtxt_Pos = [20 20 60 20];
+Wval_Pos = [75 20 60 20];
+Ltxt_Pos = [140 20 45 20];
+Lval_Pos = [180 20 60 20];
+BtnStPnt = uint16(FigPos(3)-210)+1;
+if BtnStPnt < 360
+    BtnStPnt = 360;
+end
+Btn_Pos = [BtnStPnt 20 80 20];
+ChBx_Pos = [BtnStPnt+90 20 100 20];
+Vwtxt_Pos = [255 20 35 20];
+VAxBtn_Pos = [490 20 15 20];
+VSgBtn_Pos = [510 20 15 20];
+VCrBtn_Pos = [530 20 15 20];
+
+if sno > 1
+%    shand = uicontrol('Style', 'slider','Min',1,'Max',sno,'Value',S,'SliderStep',[1/(sno-1) 10/(sno-1)],'Position', S_Pos,'Callback', {@SliceSlider, Img});
+%    stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String',sprintf('Slice# %d / %d',S, sno), 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', SFntSz);
+else
+%    stxthand = uicontrol('Style', 'text','Position', Stxt_Pos,'String','2D image', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', SFntSz);
+end    
+%ltxthand = uicontrol('Style', 'text','Position', Ltxt_Pos,'String','Level: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
+%wtxthand = uicontrol('Style', 'text','Position', Wtxt_Pos,'String','Window: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', WFntSz);
+%lvalhand = uicontrol('Style', 'edit','Position', Lval_Pos,'String',sprintf('%6.0f',LevV), 'BackgroundColor', [1 1 1], 'FontSize', LVFntSz,'Callback', @WinLevChanged);
+%wvalhand = uicontrol('Style', 'edit','Position', Wval_Pos,'String',sprintf('%6.0f',Win), 'BackgroundColor', [1 1 1], 'FontSize', WVFntSz,'Callback', @WinLevChanged);
+%Btnhand = uicontrol('Style', 'pushbutton','Position', Btn_Pos,'String','Auto W/L', 'FontSize', BtnSz, 'Callback' , @AutoAdjust);
+%ChBxhand = uicontrol('Style', 'checkbox','Position', ChBx_Pos,'String','Fine Tune', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', ChBxSz);
+%Vwtxthand = uicontrol('Style', 'text','Position', Vwtxt_Pos,'String','View: ', 'BackgroundColor', [0.8 0.8 0.8], 'FontSize', LFntSz);
+VAxBtnhand = uicontrol('Style', 'pushbutton','Position', VAxBtn_Pos,'String','A', 'FontSize', BtnSz, 'Callback' , @AxialView);
+VSgBtnhand = uicontrol('Style', 'pushbutton','Position', VSgBtn_Pos,'String','S', 'FontSize', BtnSz, 'Callback' , @SagittalView);
+VCrBtnhand = uicontrol('Style', 'pushbutton','Position', VCrBtn_Pos,'String','C', 'FontSize', BtnSz, 'Callback' , @CoronalView);
 
 set (gcf, 'WindowScrollWheelFcn', @mouseScroll);
 set (gcf, 'ButtonDownFcn', @mouseClick);
@@ -256,112 +256,112 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
         else
  %           set(stxthand, 'String', '2D image');
         end
-        set(ImHndl,'cdata',squeeze(nii(XImage,YImage,S,MainImage)))
+        set(ImHndl,'cdata',squeeze(nifti(XImage,YImage,S,MainImage)))
     end
 
-% % -=< Mouse button released callback function >=-
-%     function mouseRelease (object,eventdata)
-%             set(gcbf, 'WindowButtonMotionFcn', '')
-%             H = get(object,'UserData');
-%             if (isempty(H)) % presumed RIGHT CLICK
-%                 % do nothing
-%             else % presumed LEFT CLICK
-%                 f1 = H(1); a1 = H(2); a2 = H(3);
-%                 set(a1, 'Color',get(a2,'Color'));
-%                 set(f1, ...
-%                     'UserData',[], ...
-%                     'Pointer','arrow', ...
-%                     'CurrentAxes',a1);
-%                 if ~strcmp(get(f1,'SelectionType'),'alt'),
-%                     delete(a2);
-%                 end;
-%             end
-%     end
-% 
-% % -=< Mouse click callback function >=-
-%     function mouseClick (object, eventdata)
-%             MouseStat = get(gcbf, 'SelectionType');
-%             if (MouseStat(1) == 'a')        %   RIGHT CLICK
-%                 InitialCoord = get(0,'PointerLocation');
-%                 %             set(gcf, 'WindowButtonMotionFcn', @WinLevAdj);
-%             else    % assumed LEFT CLICK
-%                 i1 = object;
-%                 a1 = get(i1,'Parent');
-%                 f1 = get(a1,'Parent');
-%                 
-%                 a2 = copyobj(a1,f1, 'legacy');
-%                 
-%                 i2 = get(a2,'Children');
-%                 i2=i2(2);
-%                 
-%                 set(f1, ...
-%                     'UserData',[f1,a1,a2], ...
-%                     'Pointer','crosshair', ...
-%                     'CurrentAxes',a2);
-%                 set(a2, ...
-%                     'UserData',[1,0.1], ...  %magnification, frame size
-%                     'Color',get(a1,'Color'), ...
-%                     'Box','on');
-%                 set(i2,'CData',nii(XImage,YImage,S,1+mod(MainImage,2)));
-%                 xlabel(''); ylabel(''); zlabel(''); title('');
-%                 set(a1, ...
-%                     'Color',get(a1,'Color')*0.95);
-%                 set(f1, ...
-%                     'CurrentAxes',a1);
-%                 set(f1,'WindowButtonMotionFcn', @ButtonMotionCallback)
-%                 ButtonMotionCallback(f1);
-%                 
-%             end
-%     end
-% 
-%     function ButtonMotionCallback(object,eventdata)
-%         H = get(object,'UserData');
-%        if ~isempty(H)
-%           f1 = H(1); a1 = H(2); a2 = H(3);
-%           a2_param = get(a2,'UserData');
-%           f_pos = get(f1,'Position');
-%           a1_pos = get(a1,'Position');
-% 
-%           [f_cp, a1_cp] = pointer2d(f1,a1);
-% 
-%           set(a2,'Position',[(f_cp./f_pos(3:4)) 0 0]+a2_param(2)*a1_pos(3)*[-1 -1 2 2]);
-%           a2_pos = get(a2,'Position');
-% 
-%         set(a2,'XLim',a1_cp(1)+(1/a2_param(1))*(a2_pos(3)/a1_pos(3))*diff(get(a1,'XLim'))*[-0.5 0.5]);
-%         set(a2,'YLim',a1_cp(2)+(1/a2_param(1))*(a2_pos(4)/a1_pos(4))*diff(get(a1,'YLim'))*[-0.5 0.5]);
-%        end;
-%     end
-% 
-% % -=< Window and level mouse adjustment >=-
-%     function WinLevAdj(varargin)
-%         PosDiff = get(0,'PointerLocation') - InitialCoord;
-% 
-%         Win = Win + PosDiff(1) * WLAdjCoe * FineTuneC(get(ChBxhand,'Value')+1);
-%         LevV = LevV - PosDiff(2) * WLAdjCoe * FineTuneC(get(ChBxhand,'Value')+1);
-%         if (Win < 1)
-%             Win = 1;
-%         end
-% 
-%         [Rmin, Rmax] = WL2R(Win,LevV);
-%         caxis([Rmin, Rmax])
-%         set(lvalhand, 'String', sprintf('%6.0f',LevV));
-%         set(wvalhand, 'String', sprintf('%6.0f',Win));
-%         InitialCoord = get(0,'PointerLocation');
-%     end
-% 
-% % -=< Window and level text adjustment >=-
-%     function WinLevChanged(varargin)
-% 
-%         LevV = str2double(get(lvalhand, 'string'));
-%         Win = str2double(get(wvalhand, 'string'));
-%         if (Win < 1)
-%             Win = 1;
-%         end
-% 
-%         [Rmin, Rmax] = WL2R(Win,LevV);
-%         caxis([Rmin, Rmax])
-%         
-%     end
+% -=< Mouse button released callback function >=-
+    function mouseRelease (object,eventdata)
+            set(gcbf, 'WindowButtonMotionFcn', '')
+            H = get(object,'UserData');
+            if (isempty(H)) % presumed RIGHT CLICK
+                % do nothing
+            else % presumed LEFT CLICK
+                f1 = H(1); a1 = H(2); a2 = H(3);
+                set(a1, 'Color',get(a2,'Color'));
+                set(f1, ...
+                    'UserData',[], ...
+                    'Pointer','arrow', ...
+                    'CurrentAxes',a1);
+                if ~strcmp(get(f1,'SelectionType'),'alt'),
+                    delete(a2);
+                end;
+            end
+    end
+
+% -=< Mouse click callback function >=-
+    function mouseClick (object, eventdata)
+            MouseStat = get(gcbf, 'SelectionType');
+            if (MouseStat(1) == 'a')        %   RIGHT CLICK
+                InitialCoord = get(0,'PointerLocation');
+                %             set(gcf, 'WindowButtonMotionFcn', @WinLevAdj);
+            else    % assumed LEFT CLICK
+                i1 = object;
+                a1 = get(i1,'Parent');
+                f1 = get(a1,'Parent');
+                
+                a2 = copyobj(a1,f1, 'legacy');
+                
+                i2 = get(a2,'Children');
+                i2=i2(2);
+                
+                set(f1, ...
+                    'UserData',[f1,a1,a2], ...
+                    'Pointer','crosshair', ...
+                    'CurrentAxes',a2);
+                set(a2, ...
+                    'UserData',[1,0.1], ...  %magnification, frame size
+                    'Color',get(a1,'Color'), ...
+                    'Box','on');
+                set(i2,'CData',nii(XImage,YImage,S,1+mod(MainImage,2)));
+                xlabel(''); ylabel(''); zlabel(''); title('');
+                set(a1, ...
+                    'Color',get(a1,'Color')*0.95);
+                set(f1, ...
+                    'CurrentAxes',a1);
+                set(f1,'WindowButtonMotionFcn', @ButtonMotionCallback)
+                ButtonMotionCallback(f1);
+                
+            end
+    end
+
+    function ButtonMotionCallback(object,eventdata)
+        H = get(object,'UserData');
+       if ~isempty(H)
+          f1 = H(1); a1 = H(2); a2 = H(3);
+          a2_param = get(a2,'UserData');
+          f_pos = get(f1,'Position');
+          a1_pos = get(a1,'Position');
+
+          [f_cp, a1_cp] = pointer2d(f1,a1);
+
+          set(a2,'Position',[(f_cp./f_pos(3:4)) 0 0]+a2_param(2)*a1_pos(3)*[-1 -1 2 2]);
+          a2_pos = get(a2,'Position');
+
+        set(a2,'XLim',a1_cp(1)+(1/a2_param(1))*(a2_pos(3)/a1_pos(3))*diff(get(a1,'XLim'))*[-0.5 0.5]);
+        set(a2,'YLim',a1_cp(2)+(1/a2_param(1))*(a2_pos(4)/a1_pos(4))*diff(get(a1,'YLim'))*[-0.5 0.5]);
+       end;
+    end
+
+% -=< Window and level mouse adjustment >=-
+    function WinLevAdj(varargin)
+        PosDiff = get(0,'PointerLocation') - InitialCoord;
+
+        Win = Win + PosDiff(1) * WLAdjCoe * FineTuneC(get(ChBxhand,'Value')+1);
+        LevV = LevV - PosDiff(2) * WLAdjCoe * FineTuneC(get(ChBxhand,'Value')+1);
+        if (Win < 1)
+            Win = 1;
+        end
+
+        [Rmin, Rmax] = WL2R(Win,LevV);
+        caxis([Rmin, Rmax])
+        set(lvalhand, 'String', sprintf('%6.0f',LevV));
+        set(wvalhand, 'String', sprintf('%6.0f',Win));
+        InitialCoord = get(0,'PointerLocation');
+    end
+
+% -=< Window and level text adjustment >=-
+    function WinLevChanged(varargin)
+
+        LevV = str2double(get(lvalhand, 'string'));
+        Win = str2double(get(wvalhand, 'string'));
+        if (Win < 1)
+            Win = 1;
+        end
+
+        [Rmin, Rmax] = WL2R(Win,LevV);
+        caxis([Rmin, Rmax])
+        
+    end
 
 % -=< Window and level to range conversion >=-
     function [Rmn Rmx] = WL2R(W,L)
@@ -372,64 +372,64 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
         end
     end
 
-% % -=< Window and level auto adjustment callback function >=-
-%     function AutoAdjust(object,eventdata)
-%         Win = double(max(nii(:))-min(nii(:)));
-%         Win (Win < 1) = 1;
-%         LevV = double(min(nii(:)) + (Win/2));
-%         [Rmin, Rmax] = WL2R(Win,LevV);
-%         caxis([Rmin, Rmax])
-%         set(lvalhand, 'String', sprintf('%6.0f',LevV));
-%         set(wvalhand, 'String', sprintf('%6.0f',Win));
-%     end
-% 
-%     function KeyPressCallback(object,eventdata)
-%         H = get(gcf,'UserData');
-%         
-%         if ~isempty(H)
-%             f1 = H(1); a1 = H(2); a2 = H(3);
-%             a2_param = get(a2,'UserData');
-%             if (strcmp(get(f1,'CurrentCharacter'),'<') | strcmp(get(f1,'CurrentCharacter'),','))
-%                 a2_param(2) = a2_param(2)/1.2;
-%             elseif (strcmp(get(f1,'CurrentCharacter'),'>') | strcmp(get(f1,'CurrentCharacter'),'.'))
-%                 a2_param(2) = a2_param(2)*1.2;
-%             end
-%             set(a2,'UserData',a2_param);
-%         end
-%         if (strcmp(eventdata.Key,'leftarrow') | strcmp(eventdata.Key,'downarrow'))
-%             ev = []; ev.VerticalScrollCount = -1;
-%             mouseScroll (gcf, ev);
-%         elseif (strcmp(eventdata.Key,'rightarrow') | strcmp(eventdata.Key,'uparrow'))
-%             ev = []; ev.VerticalScrollCount = 1;
-%             mouseScroll (gcf, ev);
-%         elseif (strcmpi(eventdata.Key,'c'))
-%             CoronalView([]);
-%         elseif (strcmpi(eventdata.Key,'a'))
-%             AxialView([]);
-%         elseif (strcmpi(eventdata.Key,'s'))
-%             SagittalView([]);       
-%         elseif (strcmpi(eventdata.Key,'x'));
-%             if MainImage(1)==1
-%                 MainImage=3:size(nii,4);
-%             elseif MainImage(1)==3
-%                 MainImage=1;
-%             end
-%             set(ImHndl,'cdata',squeeze(nii(XImage,YImage,S,MainImage)));
-%         elseif (strcmpi(eventdata.Key,'z')) % toggles zoom in/out
-%             ImgZ=~ImgZ;
-%             switch View
-%                 case 'A'
-%                     AxialView([]);
-%                 case 'C'
-%                     CoronalView([]);
-%                 case 'S'
-%                     SagittalView([]);
-%             end
-%         end;
-%         ButtonMotionCallback(gcf);
-%     end
-% 
-% 
+% -=< Window and level auto adjustment callback function >=-
+    function AutoAdjust(object,eventdata)
+        Win = double(max(nii(:))-min(nii(:)));
+        Win (Win < 1) = 1;
+        LevV = double(min(nii(:)) + (Win/2));
+        [Rmin, Rmax] = WL2R(Win,LevV);
+        caxis([Rmin, Rmax])
+        set(lvalhand, 'String', sprintf('%6.0f',LevV));
+        set(wvalhand, 'String', sprintf('%6.0f',Win));
+    end
+
+    function KeyPressCallback(object,eventdata)
+        H = get(gcf,'UserData');
+        
+        if ~isempty(H)
+            f1 = H(1); a1 = H(2); a2 = H(3);
+            a2_param = get(a2,'UserData');
+            if (strcmp(get(f1,'CurrentCharacter'),'<') | strcmp(get(f1,'CurrentCharacter'),','))
+                a2_param(2) = a2_param(2)/1.2;
+            elseif (strcmp(get(f1,'CurrentCharacter'),'>') | strcmp(get(f1,'CurrentCharacter'),'.'))
+                a2_param(2) = a2_param(2)*1.2;
+            end
+            set(a2,'UserData',a2_param);
+        end
+        if (strcmp(eventdata.Key,'leftarrow') | strcmp(eventdata.Key,'downarrow'))
+            ev = []; ev.VerticalScrollCount = -1;
+            mouseScroll (gcf, ev);
+        elseif (strcmp(eventdata.Key,'rightarrow') | strcmp(eventdata.Key,'uparrow'))
+            ev = []; ev.VerticalScrollCount = 1;
+            mouseScroll (gcf, ev);
+        elseif (strcmpi(eventdata.Key,'c'))
+            CoronalView([]);
+        elseif (strcmpi(eventdata.Key,'a'))
+            AxialView([]);
+        elseif (strcmpi(eventdata.Key,'s'))
+            SagittalView([]);       
+        elseif (strcmpi(eventdata.Key,'x'));
+            if MainImage(1)==1
+                MainImage=3:size(nii,4);
+            elseif MainImage(1)==3
+                MainImage=1;
+            end
+            set(ImHndl,'cdata',squeeze(nii(XImage,YImage,S,MainImage)));
+        elseif (strcmpi(eventdata.Key,'z')) % toggles zoom in/out
+            ImgZ=~ImgZ;
+            switch View
+                case 'A'
+                    AxialView([]);
+                case 'C'
+                    CoronalView([]);
+                case 'S'
+                    SagittalView([]);
+            end
+        end;
+        ButtonMotionCallback(gcf);
+    end
+
+
 % -=< Axial view callback function >=-
     function AxialView(object,eventdata)
         if View == 'S'
@@ -439,7 +439,7 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
         end            
         View = 'A';
         
-        nii = ImgO;
+        nifti = ImgO;
         S = S_a;
         sno = sno_a;
         cla(hdl_im);
@@ -457,9 +457,9 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
 
         
         try % image toolbox     
-            ImHndl=imshow(squeeze(nii(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imshow(squeeze(nifti(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         catch
-            ImHndl=imagesc(squeeze(nii(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imagesc(squeeze(nifti(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         end;
         showhelptext;
         
@@ -478,7 +478,7 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
             %set(stxthand, 'String', '2D image');
         end
         
-        set(ImHndl,'cdata',squeeze(nii(XImage,YImage,S,MainImage)))
+        set(ImHndl,'cdata',squeeze(nifti(XImage,YImage,S,MainImage)))
         set (gcf, 'ButtonDownFcn', @mouseClick);
         set(ImHndl,'ButtonDownFcn', @mouseClick);
     end
@@ -500,16 +500,16 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
             YImage=ImgZsg{4};
         end
         
-        nii = flip(permute(ImgO, [3 2 1 4]),1);   % Sagittal view image;
+        nifti = flip(permute(ImgO, [3 2 1 4]),1);   % Sagittal view image;
         S = S_s;
         sno = sno_s;
         cla(hdl_im);
         hdl_im = axes('position',[0,0,1,1]);
         
         try % image toolbox     
-            ImHndl=imshow(squeeze(nii(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imshow(squeeze(nifti(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         catch
-            ImHndl=imagesc(squeeze(nii(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imagesc(squeeze(nifti(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         end;
         showhelptext;
 
@@ -529,7 +529,7 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
 %            set(stxthand, 'String', '2D image');
         end
 
-        set(ImHndl,'cdata',squeeze(nii(XImage,YImage,S,MainImage)));
+        set(ImHndl,'cdata',squeeze(nifti(XImage,YImage,S,MainImage)));
         set (gcf, 'ButtonDownFcn', @mouseClick);
         set(ImHndl,'ButtonDownFcn', @mouseClick);
 
@@ -552,16 +552,16 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
             YImage=ImgZcr{4};
         end
         
-        nii = flip(permute(ImgO, [3 1 2 4]),1);   % Coronal view image;
+        nifti = flip(permute(ImgO, [3 1 2 4]),1);   % Coronal view image;
         S = S_c;
         sno = sno_c;
         cla(hdl_im);
         hdl_im = axes('position',[0,0,1,1]);
         
         try % image toolbox     
-            ImHndl=imshow(squeeze(nii(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imshow(squeeze(nifti(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         catch
-            ImHndl=imagesc(squeeze(nii(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
+            ImHndl=imagesc(squeeze(nifti(XImage,YImage,S,MainImage)), [Rmin Rmax]); 
         end;        
         showhelptext;
         
@@ -574,7 +574,7 @@ set(gcf,'KeyPressFcn', @KeyPressCallback);
         
         caxis([Rmin Rmax])
 
-        set(ImHndl,'cdata',squeeze(nii(XImage,YImage,S,MainImage)))
+        set(ImHndl,'cdata',squeeze(nifti(XImage,YImage,S,MainImage)))
         set (gcf, 'ButtonDownFcn', @mouseClick);
         set(ImHndl,'ButtonDownFcn', @mouseClick);
     end

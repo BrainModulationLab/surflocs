@@ -5,13 +5,13 @@ if get(handles.recentfs,'Value')==1
 end
 dbsroot=dbs_getroot;
 load([dbsroot,'dbs_recentfsfolders.mat']);
-if iscell(fullrpts)
-fullrpts=fullrpts(get(handles.recentfs,'Value')-1);
+if iscell(fullrfs)
+    fullrfs=fullrfs(get(handles.recentfs,'Value')-1);
 end
 
-if strcmp('No recent patients found',fullrpts)
+if strcmp('No recent patients found',fullrfs)
    return 
 end
 
 
-dbs_load_fs(handles,fullrpts);
+dbs_load_fs(handles,fullrfs);

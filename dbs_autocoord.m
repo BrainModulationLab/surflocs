@@ -29,6 +29,7 @@ if options.fidlocalize.do
         cd(char(options.uipatdirs))
         save('localizer_options.mat','options')
         MRI_Fid_Localizer
+        % dbs_fidlocalizer.m
     end
 end
 
