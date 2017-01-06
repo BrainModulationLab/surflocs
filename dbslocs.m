@@ -22,7 +22,7 @@ function varargout = dbslocs(varargin)
 
 % Edit the above text to modify the response to help dbsfigure
 
-% Last Modified by GUIDE v2.5 15-Nov-2016 01:52:27
+% Last Modified by GUIDE v2.5 06-Jan-2017 11:06:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1526,4 +1526,3 @@ options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
 options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
 options.filename=fullfile(options.uipatdirs,prefs.skull2obj);
 dbs_showskull(options)
-
