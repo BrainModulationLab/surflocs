@@ -3,7 +3,7 @@ function varargout = DBS_Elec_Localizer(varargin)
 
 % Edit the above text to modify the response to help DBS_Elec_Localizer
 
-% Last Modified by GUIDE v2.5 11-Oct-2015 16:01:07
+% Last Modified by GUIDE v2.5 06-Jan-2017 11:35:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -791,7 +791,8 @@ if s(1)<s(2), skull.tri=skull.tri'; end
 a=[-1,0,0;0,-1,0;0,0,1];
 skull.vert = [skull.vert*a];
 
-handles.Skull.Hp = patch('vertices',skull.vert,'faces',skull.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none');
+handles.Skull.Hp = patch('vertices',skull.vert,'faces',skull.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none',...
+'facelighting', 'gouraud', 'specularstrength', .25);
 set(handles.Skull.Hp,'parent',handles.ax1)
 
 axis equal
@@ -1098,7 +1099,8 @@ elseif handles.Trim.step==3
     
     ind=logical(ind2{1}.*ind2{2}.*ind2{3});
     delete(handles.Skull.Hp)
-    handles.Skull.Hp = patch('Vertices',handles.Skull.vert,'Faces',handles.Skull.tri(ind,[1,3,2]),'facecolor',[.65 .65 .65],'edgecolor','none');
+    handles.Skull.Hp = patch('Vertices',handles.Skull.vert,'Faces',handles.Skull.tri(ind,[1,3,2]),'facecolor',[.65 .65 .65],'edgecolor','none',...
+        'facelighting', 'gouraud', 'specularstrength', .25);
     set(handles.Skull.Hp,'parent',handles.ax3)
     
     axis equal
@@ -1390,8 +1392,10 @@ a=[-1,0,0;0,-1,0;0,0,1];
 skull.vert=skull.vert'; skull.tri=skull.tri';
 skull.vert = [skull.vert*a];
 
-handles.Cortex.Hp = patch('vertices',cortex.vert,'faces',cortex.tri(:,[1 3 2]),'facecolor',[1 .65 .65],'edgecolor','none');
-handles.Skull.Hp = patch('vertices',skull.vert,'faces',skull.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none');
+handles.Cortex.Hp = patch('vertices',cortex.vert,'faces',cortex.tri(:,[1 3 2]),'facecolor',[1 .65 .65],'edgecolor','none',...
+    'facelighting', 'gouraud', 'specularstrength', .25);
+handles.Skull.Hp = patch('vertices',skull.vert,'faces',skull.tri(:,[1 3 2]),'facecolor',[.65 .65 .65],'edgecolor','none',...
+    'facelighting', 'gouraud', 'specularstrength', .25);
 handles.Cortex.Hh = plot3(handles.Cortex.hull(:,1),handles.Cortex.hull(:,2),handles.Cortex.hull(:,3),'.','color','m');
 
 elecmatrix1 = elecmatrix(elecmatrix(:,1)<0,:);
@@ -1477,3 +1481,29 @@ function mn_CD_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 dir = uigetdir;
 cd(dir);
+
+
+% --- Executes on button press in LoadElectrodeLocs.
+function LoadElectrodeLocs_Callback(hObject, eventdata, handles)
+% hObject    handle to LoadElectrodeLocs (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+[CR_fname,CR_pname,~] = uigetfile('*.mat');
+load(fullfile(CR_pname,CR_fname))
+%handles.Cortex.cortex=cortex;  NEEDED FOR MANUAL COREGISTRATION, REMOVED
+%FOR NOW
+axes(handles.ax1)
+
+MarkerSize = 50;
+if length(CortElecLoc)>8
+   MarkerSize=25;
+end
+
+els = cell2mat(CortElecLoc');
+hold on; plot3(els(:,1),els(:,2),els(:,3),'.','color',[0 175/255 0],'markersize',MarkerSize)
+hold on; plot3(els(:,1),els(:,2),els(:,3),'.','color',[0 175/255 0],'markersize',MarkerSize)
+%handles.Cortex.Hp.Facealpha = 1;
+
+
+
