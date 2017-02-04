@@ -1340,7 +1340,7 @@ function sl_XCamLoc_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
 a = get(handles.ax1,'cameraposition');
-if get(handles.rb_elecSideR,'value'), a(1) = -1*a(1); end
+if get(handles.rb_elecSideL,'value'), a(1) = 1*a(1); end
 set(handles.ax1,'cameraposition', [get(hObject,'value'),a(2),a(3)]);
 set(handles.tx_XLoc,'string',num2str(get(hObject,'value')));
 guidata(hObject,handles)
