@@ -69,7 +69,7 @@ if ~isdeployed
 end
 
 mstr='';
-set(handles.surffigure,'name','Welcome to SURFace Localizer');
+set(handles.surffigure,'name','Welcome to the SURFace Localizer');
 
 %%%%%%%%%%%%%%%%%%%
 % set(0,'gca',handles.logoaxes);

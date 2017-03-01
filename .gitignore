@@ -9,4 +9,6 @@ ehthumbs.db
 Thumbs.db
 
 # Excluded
+dbs_recentfsfolders.mat
+dbs_recentpatients.mat
 *.mat
