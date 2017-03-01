@@ -1,26 +1,26 @@
-function varargout = dbslocs(varargin)
-% DBSFIGURE MATLAB code for dbsfigure.fig
-%      DBSFIGURE, by itself, creates a new DBSFIGURE or raises the existing
+function varargout = surflocs(varargin)
+% surffigure MATLAB code for surffigure.fig
+%      surffigure, by itself, creates a new surffigure or raises the existing
 %      singleton*.
 %
-%      H = DBSFIGURE returns the handle to a new DBSFIGURE or the handle to
+%      H = surffigure returns the handle to a new surffigure or the handle to
 %      the existing singleton*.
 %
-%      DBSFIGURE('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in DBSFIGURE.M with the given input arguments.
+%      surffigure('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in surffigure.M with the given input arguments.
 %
-%      DBSFIGURE('Property','Value',...) creates a new DBSFIGURE or raises the
+%      surffigure('Property','Value',...) creates a new surffigure or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before dbslocs_OpeningFcn gets called.  An
+%      applied to the GUI before surflocs_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to dbslocs_OpeningFcn via varargin.
+%      stop.  All inputs are passed to surflocs_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help dbsfigure
+% Edit the above text to modify the response to help surffigure
 
 % Last Modified by GUIDE v2.5 06-Jan-2017 11:06:21
 
@@ -28,8 +28,8 @@ function varargout = dbslocs(varargin)
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @dbslocs_OpeningFcn, ...
-                   'gui_OutputFcn',  @dbslocs_OutputFcn, ...
+                   'gui_OpeningFcn', @surflocs_OpeningFcn, ...
+                   'gui_OutputFcn',  @surflocs_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,15 +44,15 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before dbsfigure is made visible.
-function dbslocs_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before surffigure is made visible.
+function surflocs_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to dbsfigure (see VARARGIN)
+% varargin   command line arguments to surffigure (see VARARGIN)
 
-% Choose default command line output for dbsfigure
+% Choose default command line output for surffigure
 handles.output = hObject;
 
 % Update handles structure
@@ -69,11 +69,11 @@ if ~isdeployed
 end
 
 mstr='';
-set(handles.dbsfigure,'name','Welcome to DBS Localizer');
+set(handles.surffigure,'name','Welcome to SURFace Localizer');
 
 %%%%%%%%%%%%%%%%%%%
 % set(0,'gca',handles.logoaxes);
-set(0,'CurrentFigure',handles.dbsfigure);
+set(0,'CurrentFigure',handles.surffigure);
 im=imread([dbsroot,'icons',filesep,'logo_brainmodulationlab_small.png']);
 image(im);
 axis off;
@@ -104,7 +104,7 @@ axis equal;
 %     end
 % end
 % try
-% setappdata(handles.dbsfigure,'coregctmethod',coregctmethod);
+% setappdata(handles.surffigure,'coregctmethod',coregctmethod);
 % set(handles.coregctmethod,'String',cdc);
 % catch
 %     if isempty(which('spm'))
@@ -155,12 +155,12 @@ axis equal;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% UIWAIT makes dbsfigure wait for user response (see UIRESUME)
-% uiwait(handles.dbsfigure);
+% UIWAIT makes surffigure wait for user response (see UIRESUME)
+% uiwait(handles.surffigure);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = dbslocs_OutputFcn(hObject, eventdata, handles) 
+function varargout = surflocs_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -176,13 +176,13 @@ function run_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% dbsfig=handles.dbsfigure;
+% dbsfig=handles.surffigure;
 % dbs_busyaction('on',dbsfig,'lead');
 
 options=dbs_handles2options(handles);
 
-options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
-options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+options.uipatdirs=getappdata(handles.surffigure,'uipatdir');
+options.uifsdir=getappdata(handles.surffigure,'uifsdir');
 try
 save(fullfile(char(options.uipatdirs,'options.mat')),'options')
 end
@@ -873,7 +873,7 @@ function coregctmethod_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns coregctmethod contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from coregctmethod
-% methods=getappdata(handles.dbsfigure,'coregctmethod');
+% methods=getappdata(handles.surffigure,'coregctmethod');
 % methods=handles.coregctmethod.String;
 % wm=get(handles.coregctmethod,'Value');
 % 
@@ -1485,8 +1485,8 @@ function dicm2tiff_Callback(hObject, eventdata, handles, options)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % [options.fluoro] = dbs_dicm2tiff(options);
-options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
-options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+options.uipatdirs=getappdata(handles.surffigure,'uipatdir');
+options.uifsdir=getappdata(handles.surffigure,'uifsdir');
 if isempty(options.uipatdirs)
     error('Please Choose Patient Directory')
 end
@@ -1498,8 +1498,8 @@ function dicm2nifti_Callback(hObject, eventdata, handles)
 % hObject    handle to dicm2nifti (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
-options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+options.uipatdirs=getappdata(handles.surffigure,'uipatdir');
+options.uifsdir=getappdata(handles.surffigure,'uifsdir');
 if isempty(options.uipatdirs)
     error('Please Choose Patient Directory')
 end
@@ -1519,10 +1519,10 @@ function skull2Obj_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 prefs = dbs_prefs('');
-if isempty(getappdata(handles.dbsfigure,'uipatdir'))
+if isempty(getappdata(handles.surffigure,'uipatdir'))
     error('Please Choose Patient Directory')
 end
-options.uipatdirs=getappdata(handles.dbsfigure,'uipatdir');
-options.uifsdir=getappdata(handles.dbsfigure,'uifsdir');
+options.uipatdirs=getappdata(handles.surffigure,'uipatdir');
+options.uifsdir=getappdata(handles.surffigure,'uifsdir');
 options.filename=fullfile(options.uipatdirs,prefs.skull2obj);
 dbs_showskull(options)
