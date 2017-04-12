@@ -1,7 +1,8 @@
-# SurfLocs
-[![brain modulation lab](https://github.com/akapp/surflocs/blob/master/icons/logo_brainmodulationlab_large.png)](#features)
+<img src="https://github.com/akapp/surflocs/blob/master/icons/logo_brainmodulationlab_large.png" align="right" />
 
-Surface Localizer for Intraoperative Cortical Strip Recordings 
+# SurfLocs
+
+Electrode Localization for Intraoperative Cortical Strip Recordings 
 
 ## Contributors
 
