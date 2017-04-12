@@ -15,7 +15,7 @@ end
 % store patient directories in figure
 
 
-setappdata(handles.dbsfigure,'uifsdir',uifsdir);
+setappdata(handles.surffigure,'uifsdir',uifsdir);
 try
 dbs_switchctmr(handles);
 end

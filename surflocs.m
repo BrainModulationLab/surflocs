@@ -58,7 +58,17 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
+% Check path
 dbsroot=dbs_getroot;
+pathCell = regexp(path, pathsep, 'split');
+if ispc  % Windows is not case-sensitive
+  onPath = any(strcmpi(dbsroot, pathCell));
+else
+  onPath = any(strcmp(dbsroot, pathCell));
+end
+if ~onPath
+    addpath(genpath(dbsroot));
+end
 
 % add recent patients...
 dbs_initrecentpatients(handles);
