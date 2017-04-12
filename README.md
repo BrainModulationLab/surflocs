@@ -3,5 +3,5 @@ Cortical Surface Electrode Localizer for Intraoperative Cortical Strip Recording
 
 from the BrainModulation Lab
 
-% __________________________________________________________________________________
-% Copyright (C) 2017 University of Pittsburgh, Brain Modulation Lab
+__________________________________________________________________________________
+Copyright (C) 2017 University of Pittsburgh, Brain Modulation Lab
