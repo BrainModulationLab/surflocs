@@ -10,4 +10,4 @@ Electrode Localization for Intraoperative Cortical Strip Recordings
 * Stathis Kondylis
 * Mike Randazzo
 __________________________________________________________________________________
-Copyright (C) 2017 University of Pittsburgh, Brain Modulation Lab (MIT License)
+Copyright (C) 2017 University of Pittsburgh, Brain Modulation Lab
