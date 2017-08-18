@@ -104,7 +104,9 @@ Electrode Localization for Intraoperative Cortical Strip Recordings
      -	Check by reloading cortex to see electrode placement
      -	Save your work into a separate file for comparison
      
-     
+## References
+Randazzo, M. J., Kondylis, E. D., Alhourani, A., Wozny, T. A., Lipski, W. J., Crammond, D. J., & Richardson, R. M. (2016). Three-dimensional localization of cortical electrodes in deep brain stimulation surgery from intraoperative fluoroscopy. Neuroimage, 125, 515-521. https://www.ncbi.nlm.nih.gov/pubmed/26520771
+
 ## Contributors
 
 * Ari Kappel
