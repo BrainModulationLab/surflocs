@@ -109,10 +109,10 @@ Randazzo, M. J., Kondylis, E. D., Alhourani, A., Wozny, T. A., Lipski, W. J., Cr
 
 ## Contributors
 
-* Ari Kappel
 * Stathis Kondylis
 * Mike Randazzo
 * Witold Lipski
+* Ari Kappel
 * Steven Lo
 __________________________________________________________________________________
      Copyright (C) 2017 University of Pittsburgh, Brain Modulation Lab
