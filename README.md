@@ -2,7 +2,8 @@
 
 # SurfLocs
 
-Surface Localizer: Electrode Localization for Intraoperative Cortical Strip Recordings 
+Surface Localizer: 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Electrode Localization for Intraoperative Cortical Strip Recordings 
 
 ## Quick Start Guide
 
